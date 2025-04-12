@@ -1,0 +1,111 @@
+{% extends 'layout.html' %}
+{% block title %}Cources{% endblock %}
+{% block body %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'Cource/one.css' %}">
+<style>
+
+    body {
+
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+    }
+
+    h1 {
+        color: #333;
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .all-Questions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        max-width: 600px;
+        margin: auto;
+    }
+
+    .Q {
+        background: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        text-align: left;
+        padding-bottom: 20px;
+    }
+
+    h4 {
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    select {
+        width: 100%;
+        padding: 8px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    select:hover, select:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .submit-btn {
+        margin-top: 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .submit-btn:hover {
+        background-color: #0056b3;
+    }
+
+</style>
+
+
+{% if user.is_staff  %}
+<div class="admin footer1" style="margin: 0;">
+    <a href="{% url 'Deleat_Exam' Exam.id %}" class="Admin">deleat Exam</a>
+    <a href="{% url 'Q' Exam.id %}" class="Admin">Add Question</a>
+</div>
+{% endif %}
+
+
+<h1>{{ Exam.Name }}</h1>
+
+<!-- وضع جميع الأسئلة في نموذج واحد -->
+<form action="{% url 'submit_test' Exam.id %}" method="POST">
+    {% csrf_token %}
+    <div class="all-Questions">
+        {% for q in Q %}
+        <div class="Q">
+            <h4>{{ q.Q }}</h4>
+            <select name="answer_{{ q.id }}">
+                <option value="" disabled selected>Choose answer</option>
+                <option value="{{ q.answer1 }}">{{ q.answer1 }}</option>
+                <option value="{{ q.answer2 }}">{{ q.answer2 }}</option>
+                <option value="{{ q.answer3 }}">{{ q.answer3 }}</option>
+            </select>
+        </div>
+        {% endfor %}
+    </div>
+
+    <input type="submit" value="Submit" class="submit-btn">
+</form>
+<br>
+{% endblock %}

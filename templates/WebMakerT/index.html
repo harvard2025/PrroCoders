@@ -1,0 +1,156 @@
+{% extends 'layout.html' %}
+{% block title %}Make Your Website{% endblock %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'web.css' %}">
+{% endblock %}
+
+{% block body %}
+
+
+
+
+
+
+
+
+
+
+<h1>Make Your Website {3$}</h1>
+
+
+
+<form action="{% url 'Send_Form' %}" method="post" enctype="multipart/form-data" class="form">
+    {% csrf_token %}
+    <input type="text" name="name" class="name" placeholder="Enter The Web Name">
+    <br>
+    <textarea name="desc" id="" cols="70" rows="10" placeholder="Enter very long description" class="desc"></textarea>
+    <br>
+
+    <!-- img -->
+    <!-- <div class="Dimg">
+        <label for="image">Style Example: </label>
+        <input type="file" name="image" accept="image/*" required placeholder="image">
+    </div> -->
+
+    <br>
+
+    <input type="text" name="idea" id="idea" placeholder="Enter The main idea for this website">
+
+    <br>
+
+    <input class="text" type="email" name="email" id="email" placeholder="Enter your Email">
+    <br>
+
+    <input class="text" type="tel" name="number" id="tel" placeholder="Enter Your number">
+    <br>
+    <br>
+
+
+
+
+
+
+
+
+    <div class="check">
+        <div class="Ddomain">
+            <label for="domain">{30$} include Domain (example.com)</label>
+            <input type="checkbox" name="domain" id="domain">
+        </div>
+    
+        <!-- <br> -->
+        <div class="Ddynamic">
+            <label for="dynamic">{3$} dynamic web</label>
+            <input type="checkbox" name="dynamic" id="dynamicWebCheckbox" onclick="
+                if (this.checked) {
+                    document.querySelector('#fdb').style.display = 'inline';
+                    document.querySelector('.Ddb').style.display = 'block';
+                    document.querySelector('#db').style.display = 'inline';
+                } else {
+                    document.querySelector('#fdb').style.display = 'none';
+                    document.querySelector('.Ddb').style.display = 'none';
+                    document.querySelector('#db').style.display = 'none';
+                }
+            ">
+        </div>
+            <!-- <br> -->
+            
+            <div class="Ddb" style="display: none;">
+                <label for="db" id="fdb" style="display: none;">{1$} include DataBase</label>
+                <input type="checkbox" name="db" id="db" style="display: none;">
+                <!-- <br id="bdb" style="display: none;">
+                <br id="bdb" style="display: none;"> -->
+            </div>
+    
+
+        <div class="DC">
+            <label for="" id="" >Have Cobon?</label>
+            <input type="checkbox" name="isC" id="isC" onclick="
+            if (this.checked) {
+                document.querySelector('#cobon').style.display = 'inline';
+                document.querySelector('#bc').style.display = 'block';
+        
+            } else {
+                document.querySelector('#cobon').style.display = 'none';
+                document.querySelector('#cobon').style.display = 'none';
+        
+            }">
+        </div>
+    
+        <!-- <br> -->
+        <input type="text" name="cobon" id="cobon" placeholder="Cobon" style="display: none;">
+        <!-- <br> -->
+
+    </div>
+
+
+    <!-- <div class="Dprice" style="display:flex;flex-direction: row;">
+        <h4 class="price">3</h4><h4>$</h4>
+    </div> -->
+
+    <input type="submit" value="Make it">
+</form>
+
+
+
+
+<script>
+    
+
+    if (document.querySelector('#domain').checked) {
+        document.querySelector('.price').innerHTML = document.querySelector('.price').innerHTML + 30;
+        
+
+    } else {
+        document.querySelector('#cobon').style.display = 'none';
+        document.querySelector('#cobon').style.display = 'none';
+
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock body %}

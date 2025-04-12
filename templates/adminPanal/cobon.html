@@ -1,0 +1,199 @@
+
+{% extends 'layout.html' %}
+{% block title %}Admin: {{request.user}}{% endblock %}
+{% block body %}
+{% load static %}
+{% if user.is_superuser or user.is_staff %}
+
+
+
+<!-- <style>
+    .Tasks{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+    }
+    .Task{
+        background-color: rgb(255, 255, 255);
+        margin: 20px;
+        padding: 30px;
+        
+        box-shadow: 3px 2px 7px rgba(0, 0, 0, 0.146);
+        transition: 0.2s;
+        text-decoration: none;
+        color: #2c3e50;
+    }
+    .Task:hover{
+        transform: translateY(-7px);
+        scale: 1.03;
+        background-color: rgba(0, 12, 74, 0.009);
+    }
+    .title{
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 2.5em;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+</style> -->
+
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f6f9;
+        margin: 0;
+        padding: 0;
+    }
+
+    .Tasks {
+        display: flex;
+        /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); */
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .Task {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+        text-decoration: none;
+        color: #2c3e50;
+        text-align: center;
+        border-left: 5px solid #2c3e50;
+    }
+
+    .Task:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+        border-left: 5px solid #2980b9;
+    }
+
+    .Task h1 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+
+    .Task h4 {
+        font-size: 1.1em;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .Task p {
+        font-size: 0.9em;
+        color: #888;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 2.5em;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #2c3e50;
+        margin-top: 30px;
+    }
+
+    .error-container {
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .error-container h1 {
+        color: rgb(137, 11, 11);
+        font-size: 3em;
+        margin-bottom: 10px;
+    }
+
+    .error-container p {
+        color: rgb(130, 0, 0);
+        font-size: 1.2em;
+    }
+
+    .error-container strong {
+        color: rgb(113, 4, 4);
+        font-size: 20px;
+        font-weight: 800;
+    }
+    .from {
+        text-align: center;
+    }
+    .done {
+        background: #2980b9;
+        color: #ffffff;
+        padding: 10px 30px;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    .done:hover {
+        background: #1c6391;
+    }
+</style>
+
+
+
+
+<h1 class='title'>Cobons</h1>
+<div class="Tasks">
+    
+
+    {% for Cobon in Cobons %}
+
+        <div class="Task">
+            <h1>{{Cobon.name}}</h1>
+            <h4>{{Cobon.Sale}}%</h4>
+            <p>{{Cobon.Eyear}}/{{Cobon.Emonth}}/{{Cobon.Eday}}</p>
+            
+            <form action="{% url 'DoneC' Cobon.id %}" method="post" class="from">
+                {% csrf_token %}
+                <input class="done" type="submit" value="UnActive">
+            </form>
+        </div>
+    {% endfor %}
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+{% else %}
+
+    <h1 style="color: rgb(137, 11, 11);">Error 404</h1>
+    <p style="color: rgb(130, 0, 0);">You Can't Enter This Page,
+        This Page only for admins.
+    </p>
+    <p><strong style="color: rgb(113, 4, 4); font-size: 20px; font-weight: 800;">{{request.user.username}}</strong> not Admin</p>
+
+{% endif %}
+{% endblock %}

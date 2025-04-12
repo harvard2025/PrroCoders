@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+{% block title %}Test Result{% endblock %}
+{% block body %}
+
+<style>
+    .result-container {
+        text-align: center;
+        padding: 20px;
+        max-width: 500px;
+        margin: auto;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    .score {
+        font-size: 22px;
+        margin: 15px 0;
+        font-weight: bold;
+    }
+
+    .percentage {
+        font-size: 24px;
+        color: {% if percentage >= 50 %} green {% else %} red {% endif %};
+    }
+    .but{
+        color: black;
+        text-decoration: none;
+        margin: 10px;
+        font-size: 15px;
+        padding: 10px;
+
+    }
+    .but:hover{
+        text-decoration: underline;
+    }
+</style>
+
+<div class="result-container">
+    <h1>{{ exam.Name }}</h1>
+    <p class="score">Result: {{ score }} / {{ total }}</p>
+    <p class="percentage">percentage: {{ percentage|floatformat:2 }}%</p>
+    {% if Succes == True %}
+        <h4 style="color: green; font-size: 20px; display:inline;">successful</h4>
+        <br><br>
+        <a href="{% url 'oneCource' exam.Lesson.Cource.id %}" class="but">Next</a>
+    {% elif Succes == False %}
+        <h4 style="color: rgb(135, 0, 0); font-size: 20px; display:inline;">fail</h4>
+        <br><br>
+        <a href="{% url 'Exam' exam.Lesson.id %}" class="but">Retest</a>
+    {% else %}
+        <h4>{{Succes}}</h4>
+    {% endif %}
+    
+</div>
+
+{% endblock %}

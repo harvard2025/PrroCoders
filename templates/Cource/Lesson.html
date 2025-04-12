@@ -1,0 +1,111 @@
+{% extends 'layout.html' %}
+{% block title %}Cources{% endblock %}
+{% block body %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'Cource/one.css' %}">
+
+<style>
+    body{
+        height: 100vh;
+    }
+    .but{
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        position:relative;
+        bottom: 0;
+    }
+    form{
+        width: 100%;
+    }
+    form> input{
+        width: 100%;
+        border: 0.1px solid rgba(0, 0, 0, 0.142);
+
+        height: 50px;
+        transition: 0.2s;
+    }
+    form> input:hover{
+        background-color: rgb(203, 203, 203);
+    }
+    .mainC{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+
+{% if isSub == True or user.is_staff %}
+
+
+
+
+
+{% if user.is_staff  %}
+<div class="admin footer1">
+
+    {% if isExam == False %}
+        <a href="{% url 'Add_Exam' Lesson.id %}" class="Admin">Add Exam</a>
+    {% endif %}
+    
+    <a href="{% url 'Deleat_Lesson' Lesson.id %}" class="Admin">deleat Lesson</a>
+</div>
+{% endif %}
+
+
+
+
+<div class="mainC">
+    <h1>{{ Lesson.Name }}</h1>
+    {% if "youtube.com" in lesson_url or "youtu.be" in lesson_url %}
+        <iframe width="90%" height="500px" src="{{ lesson_url }}" frameborder="0" allowfullscreen></iframe>
+    {% else %}
+        <video width="90%" controls>
+            <source src="{{ lesson_url }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    {% endif %}
+</div>
+
+<br>
+
+<div class="but">
+    <form action="{% url 'oneCource' Lesson.Cource.id %}">
+
+        <input type="submit" value="Back">
+    </form>
+    {% if isExam == True%}
+        <form action="{% url 'Exam' Lesson.id %}">
+            <input type="hidden" name="Lesson_id" value="{{Lesson.id}}">
+            <input type="submit" value="Next to Exam">
+        </form>
+    {% endif %}
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endif %}
+    {% if  isSub == False %}
+        {% if not user.is_staff  %}
+        <h1 style="color: rgb(113, 0, 0);">404 Error</h1>
+        <h3>You Should Subscribe First</h3>
+        <p><strong style="color: brown;">{{ user }}</strong> not subscribe in {{ Lesson.Cource.Name }}</p>
+        {% endif %}
+
+    {% endif %}
+{% endblock %}

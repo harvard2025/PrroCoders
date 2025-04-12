@@ -1,0 +1,170 @@
+
+{% extends 'layout.html' %}
+{% block title %}Admin: {{request.user}}{% endblock %}
+{% block body %}
+{% load static %}
+
+<style>
+    .items-panal{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        list-style-type: none;
+
+    }
+    .item-panal{
+        margin: 10px;
+        background-color: #ffffff;
+        padding: 50px 30px;
+        font-size: 30px;
+        transition: 0.3s;
+        box-shadow: 3px 2px 7px rgba(0, 0, 0, 0.178);
+    }
+    .link-panal{
+        text-decoration: none;
+        color: black;
+    }
+    .item-panal:hover{
+        scale: 1.1;
+        background-color: rgba(0, 78, 65, 0.183);
+        
+        
+
+    }
+</style>
+
+{% if user.is_superuser %}
+
+    <ul class="items-panal">
+        <li class="item-panal">
+            <img src="{% static 'png/AddE.png' %}" alt="" width="30px">
+            <a class="link-panal" href="">Add Employe</a>
+        </li>
+    
+        <li class="item-panal">
+            <img src="{% static 'png/hr.png' %}" alt="" width="30px">
+            <a class="link-panal" href="">Add HR</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/task2.png' %}" alt="" width="30px">
+            <a class="link-panal" href="{% url 'Tasks' %}">Tasks</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/task2.png' %}" alt="" width="30px">
+            <a class="link-panal" href="">Done Projects</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/cobon.png' %}" alt="" width="30px">
+            <a class="link-panal" href="{% url 'Cobons' %}">Add Cobon</a>
+        </li>
+
+
+        <li class="item-panal">
+            <img src="{% static 'png/Manager.png' %}" alt="" width="30px">
+            <a class="link-panal" href="">Employe</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/Store.png' %}" alt="" width="30px">
+            <a class="link-panal" href="">Add to Store</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/Cource.png' %}" alt="" width="30px">
+            <a class="link-panal" href="/admin/CourcePanal/cource/add/">Add Cource</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/blog (1).png' %}" alt="" width="30px">
+            <a class="link-panal" href="">Add Blog</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/email (1).png' %}" alt="" width="30px">
+            <a class="link-panal" href="">Mail</a>
+        </li>
+    </ul>
+
+
+
+
+
+{% elif user.is_staff and not user.is_superuser %}
+    
+
+    <ul class="items-panal">
+        
+        <li class="item-panal">
+            <img src="{% static 'png/task2.png' %}" alt="" width="30px">
+            <a class="link-panal" href="{% url 'Tasks' %}">Tasks</a>
+        </li>
+
+        
+        <li class="item-panal">
+            <img src="{% static 'png/task2.png' %}" alt="" width="30px">
+            <a class="link-panal" href="">Done Projects</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/cobon.png' %}" alt="" width="30px">
+            <a class="link-panal" href="{% url 'Cobons' %}">Add Cobon</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/Store.png' %}" alt="" width="30px">
+            <a class="link-panal" href="">Add to Store</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/Cource.png' %}" alt="" width="30px">
+            <a class="link-panal" href="">Add Cource</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/blog (1).png' %}" alt="" width="30px">
+            <a class="link-panal" href="">Add Blog</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/Manager (2).png' %}" alt="" width="30px">
+            <a class="link-panal" href="">The Manager</a>
+        </li>
+
+        <li class="item-panal">
+            <img src="{% static 'png/email (1).png' %}" alt="" width="30px">
+            <a class="link-panal" href="">Mail</a>
+        </li>
+    </ul>
+
+{% else %}
+
+    <h1 style="color: rgb(137, 11, 11);">Error 404</h1>
+    <p style="color: rgb(130, 0, 0);">You Can't Enter This Page,
+        This Page only for admins.
+    </p>
+    <p><strong style="color: rgb(113, 4, 4); font-size: 20px; font-weight: 800;">{{request.user.username}}</strong> not Admin</p>
+
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

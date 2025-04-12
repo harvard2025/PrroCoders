@@ -1,0 +1,141 @@
+.info{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.img{
+    border: 5px solid black;
+    border-radius: 25px;
+    width: 300px;
+
+    
+}
+
+.main{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    width: 70%;
+    height: 70%;
+    background: linear-gradient(90deg, #fbfbef 0%, #ffa20034 50%, #ffbc1333 100%);
+    padding: 30px;
+    border: 1px solid rgba(0, 0, 0, 0.114);
+    border-radius: 25px;
+    box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.167);
+}
+.cont{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-right: 20px;
+}
+.name{
+    font-weight: 900;
+    font-size: 40px;
+    color: rgb(0, 0, 69);
+}
+
+.footer1{
+    margin-top: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    background: linear-gradient(90deg, #ffffe8 0%, #f3ff85c1 50%, #f3f4e0 100%);
+    border-top: 1px solid rgba(0, 0, 0, 0.162);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.162);
+    margin: 40px 0 10px 0;
+    
+}
+
+.lessons{
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 30px;
+    list-style-type: none;
+    border-bottom: 1px solid black;
+
+}
+
+.a-lesson{
+    text-decoration: none;
+    color: rgb(0, 47, 100);
+    transition: 0.3s;
+}
+.a-lesson:hover{
+    color: rgb(7, 7, 171);
+    font-size: 28px;
+}
+
+.lesson{
+    width: 100%;
+    font-size: 25px;
+    text-decoration: none;
+    font-weight: 800;
+
+
+    padding: 17px;
+    border-top: 1px solid black;
+    text-align: center;
+    
+}
+
+.Done{
+    color: green;
+}
+
+.sub{
+    text-decoration: none;
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+    padding: 5px 10px;
+    background-color: rgba(0, 96, 10, 0.511);
+    border: 1px solid rgba(0, 0, 0, 0.21);
+    border-radius: 25px;
+    transition: 0.3s;
+    box-shadow: 3px 2px 7px rgba(0, 0, 0, 0.116);
+}
+.sub:hover{
+    background-color: rgb(0, 96, 10);
+    transform: translateY(-5px);
+}
+
+.buy{
+    text-decoration: none;
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+    padding: 5px 10px;
+    background-color: rgba(0, 96, 10, 0.511);
+    border: 1px solid rgba(0, 0, 0, 0.21);
+    border-radius: 25px;
+    transition: 0.3s;
+    box-shadow: 3px 2px 7px rgba(0, 0, 0, 0.116);
+}
+.buy:hover{
+    background-color: rgb(0, 96, 10);
+    transform: translateY(-5px);
+}
+
+.un{
+    background-color: rgba(176, 0, 0, 0.429);
+}
+.un:hover{
+    background-color: rgb(175, 0, 0);
+    transform: translateY(-5px);
+}
+
+
+.Admin{
+    text-decoration: none;
+    font-size: 20px;
+    margin: 10px;
+    color: black;
+}
+.Admin:hover{
+    text-decoration: underline;
+}

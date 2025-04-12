@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PrroCoders{% endblock title %}</title>
+    <link rel="icon" href="{% static 'Prro Coders.jpg' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+    <div class="navbar1">
+        <!-- Logo -->
+        <img src="{% static 'Prro Coders.jpg' %}" alt="PrroCoders" class="logo" width="100" >
+
+        <!-- nav -->
+        <ul class="nav1">
+            <li class="nav-item1">
+                <a class="nav-link1" href="{% url 'Home:index' %}">Home</a>
+            </li>
+            <li class="nav-item1">
+                <a class="nav-link1" href="{% url 'Cource' %}">Cources</a>
+            </li>
+            <!-- <li class="nav-item1">
+                <a class="nav-link1" href="">Certificates</a>
+            </li> -->
+            <li class="nav-item1">
+                <a class="nav-link1" href="{% url 'WebMakerIndex' %}">Make Your Website</a>
+            </li>
+            <li class="nav-item1">
+                <a class="nav-link1" href="">Horozintal</a>
+            </li>
+            <li class="nav-item1">
+                <a class="nav-link1" href="">Blog</a>
+            </li>
+            <li class="nav-item1">
+                <a class="nav-link1" href="">PrroComunity</a>
+            </li>
+            {% if user.is_authenticated and not user.is_superuser and not user.is_staff %}
+
+            <li class="nav-item1">
+                <a href="" class="nav-link1">{{ user.username }}</a>
+            </li>
+            <li class="nav-item1">
+                <a class="nav-link1" href="{% url 'logout' %}">Log Out</a>
+            </li>
+            {% elif user.is_superuser %}
+                <li class="nav-item1">
+                    <a href="{% url 'adminPanal' %}" class="nav-link1">Admin</a>
+                </li>    
+                <li class="nav-item1">
+                    <a href="" class="nav-link1">{{ user.username }}</a>
+                </li>
+                <li class="nav-item1">
+                    <a class="nav-link1" href="{% url 'logout' %}">Log Out</a>
+                </li>
+
+            {% elif user.is_staff and not user.is_superuser %}
+                <li class="nav-item1">
+                    <a href="{% url 'adminPanal' %}" class="nav-link1">Admin</a>
+                </li>        
+
+                <li class="nav-item1">
+                    <a href="" class="nav-link1">{{ user.username }}</a>
+                </li>
+                <li class="nav-item1">
+                    <a class="nav-link1" href="{% url 'logout' %}">Log Out</a>
+                </li>
+            {% else %}
+                <li class="nav-item1">
+                    <a class="nav-link1" href="{% url 'Login' %}">Log In</a>
+                </li>
+                <li class="nav-item1">
+                    <a class="nav-link1" href="{% url 'register' %}">Register</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+
+
+
+
+
+
+    <div class="container container-content">
+        {% block body %}{% endblock body %}
+    </div>
+
+</body>
+</html>

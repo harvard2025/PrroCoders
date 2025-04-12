@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+{% block title %}Cources{% endblock %}
+{% block body %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'Cource/one.css' %}">
+
+<style>
+    form{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .label{
+        font-size: 30px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: black;
+        margin: 5px;
+    }
+    .cer{
+        border: 0.2px solid rgba(0, 0, 0, 0.322);
+        border-radius: 25px;
+        font-size: 20px;
+        width: 50%;
+        height: 40px;
+    }
+    .sub{
+        margin-top: 20px;
+    }
+</style>
+
+<form action="{% url 'make_sub' Cource.id %}" method="post">
+    {% csrf_token %}
+    <label for="Certificate_Name" class="label">Enter Your Certeficate Name</label>
+    <input type="text" class="cer name" name="Certificate_Name">
+    <input type="submit" class='sub' value="Subscribe">
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

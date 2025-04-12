@@ -1,0 +1,121 @@
+{% extends 'layout.html' %}
+{% block title %}Cources{% endblock %}
+{% block body %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'Cource/one.css' %}">
+
+
+
+<div class="info">
+    <div class="main">
+
+        <div class="cont">
+            <h1 class="name">{{Cource.Name}}</h1>
+            <p class="desk">{{Cource.description}}</p>
+            {% if user.is_authenticated %}
+
+                {% if not isSub %}
+                
+                    {% if Cource.price == 0 %}
+                        <a href="{% url 'sub' Cource.id %}" class="sub">Subscribe</a>
+                    {% else %}
+                        <a href="" class="buy">Buy</a>
+                    {% endif %}
+                {% else %}
+                    {% if Cource.price == 0 %}
+                        <a href="{% url 'unsub' Cource.id %}" class="un sub">UnSubscribe</a>
+                    {% else %}
+                        <a href="" class="buy">Buy</a>
+                    {% endif %}
+                {% endif %}
+
+            {% else %}
+                {% if Cource.price == 0 %}
+                    <a href="{% url 'Login'  %}" class="sub">Subscribe</a>
+                {% else %}
+                    <a href="{% url 'Login'  %}" class="buy">Buy</a>
+                {% endif %}
+            {% endif %}
+
+
+
+            
+        </div>
+
+        {% if Cource.image %}
+            <img src="{{ Cource.image.url }}" alt="Course Image" width="70px" class="img">
+        {% else %}
+            <img src="/media/default.png" alt="Default Image" width="70px" class="img">
+        {% endif %}
+    </div>
+    <div class="footer1">
+        {% if user.is_staff %}
+            <h4 class="count">{{Cource.Subscribe.count}} Sub</h4>
+        {% endif %}
+        <h4 class="dur"><strong>{{Cource.duration}}</strong> Hours</h4>
+        
+        {% if Cource.price == 0 %}
+            <h4 class="free "><strong>Free</strong></h4>
+        {% else %}
+            <h4 class="price"><strong>{{Cource.price}}</strong> $</h4>
+        {% endif %}
+        <h4>{{Cource.lang.name}}</h4>
+        <h5 class="by">By: <strong>{{Cource.By}}</strong></h5>
+    </div>
+
+
+    <br><br>
+    
+    <ul  class="lessons">
+
+        {% if not Lessons %}
+            <li class="no-lessons">No Lessons Right Now </li>
+            <br>
+        {% endif %}
+        {% for Lesson in Lessons %}
+            <li class="lesson">
+                {% if isSub %}
+                    {% if Lesson.id in DoneLessons %}
+                        <img src="{% static 'png/True.png' %}" alt="Done" width="20px">
+                    {% endif %}
+                {% endif %}
+        
+                {% if isSub or user.is_staff %}
+                    <a href="{% url 'lesson' Lesson.id %}" class="a-lesson">{{ Lesson.Name }}</a>
+                {% else %}
+                    <a href="#" class="a-lesson" onclick="alert('You Should Subscribe First')">{{ Lesson.Name }}</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    
+    
+    </ul>
+</div>
+<br>
+
+<!-- is_staff -->
+{% if user.is_staff  %}
+<div class="admin footer1">
+
+    {% if Cource.isActive == True %}
+
+        <a href="{% url 'Active' Cource.id %}" class="Admin">UnActive</a>
+    {% else %}
+        <a href="{% url 'Active' Cource.id %}" class="Admin">Active</a>
+    {% endif %}
+    
+    <a href="{% url 'Add_Lesson' Cource.id %}" class="Admin">Add Lesson</a>
+</div>
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

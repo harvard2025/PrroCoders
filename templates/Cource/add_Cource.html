@@ -1,0 +1,81 @@
+{% extends 'layout.html' %}
+{% block title %}Cources{% endblock %}
+{% block body %}
+{% load static %}
+
+<style>
+    form{
+        margin-top: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        gap: 10px;
+    }
+    form > input[type=text], form > textarea, #lang{
+        width: 90%;
+        height: 40px;
+        border: 1px solid black;
+        border-radius: 25px;
+        padding: 10px;
+        font-size: 20px;
+    }
+    .submit{
+        border: 0.1px solid rgba(0, 0, 0, 0.217);
+        border-radius: 25px;
+        padding: 10px 20px;
+        background-color: rgb(254, 254, 254);
+        transition: 0.3s;
+        margin-top: 20px;
+
+    }
+    .submit:hover{
+
+        transform: translateY(-5px);
+    }
+</style>
+
+
+<form action="{% url 'Add_Cource' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="image" accept="image/*" required placeholder="image">
+    <input type="text" name="Name" class="url" placeholder="Name">
+    <textarea name="description" id="" placeholder="description" style="width: 90%;"></textarea>
+    <input type="text" name="duration" class="duration" placeholder="duration">
+    <input type="text" name="By" class="By" placeholder="{{request.user}}" value="">
+    <input type="text" name="price" class="price" placeholder="price">
+    <select name="lang" id="lang">
+        {% for lang in langs %}
+            <option value="{{lang.name}}">{{lang.name}}</option>
+        {% endfor %}
+    </select>
+
+
+
+    <input type="submit" class="submit" value="Create Cource">
+    <br><br>
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

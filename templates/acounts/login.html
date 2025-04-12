@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<style>
+    /* إعادة تعيين الارتفاع الكامل للصفحة */
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+
+    /* حاوية الصفحة الرئيسية لصفحة تسجيل الدخول */
+    .login-page {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* تصميم حاوية تسجيل الدخول */
+    .login-container {
+        background: #fff;
+        width: 350px;
+        padding: 40px;
+        border-radius: 9px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    /* أنميشن ظهور الحاوية */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* عنوان صفحة تسجيل الدخول */
+    .login-container h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    /* تنسيق مجموعات الإدخال */
+    .input-group {
+        position: relative;
+        margin-bottom: 25px;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        outline: none;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+    .input-group input:focus {
+        border-color: #2a5298;
+    }
+
+    /* تأثير تحريك اللايبل */
+    .input-group label {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        color: #999;
+        font-size: 16px;
+        pointer-events: none;
+        transition: 0.3s ease all;
+        background: #fff;
+        padding: 0 5px;
+    }
+
+    /* عند التركيز أو وجود قيمة داخل الحقل */
+    .input-group input:focus ~ label,
+    .input-group input:not(:placeholder-shown) ~ label {
+        top: -10px;
+        left: 8px;
+        font-size: 12px;
+        color: #2a5298;
+    }
+
+    /* زر تسجيل الدخول */
+    .login-container button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 4px;
+        background: #2a5298;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .login-container button:hover {
+        background: #1e3c72;
+    }
+
+    /* تأثير بسيط عند التحويم على حاوية تسجيل الدخول */
+    .login-container:hover {
+        transform: scale(1.02);
+        transition: transform 0.3s ease;
+    }
+
+</style>
+
+<div class="login-page">
+  <div class="login-container">
+    <h2>Login</h2>
+    <form action="{% url 'Login' %}" method="POST">
+      {% csrf_token %}
+      <div class="input-group">
+        <input type="text" id="username" name="username" required placeholder=" ">
+        <label for="username">Username</label>
+      </div>
+      <div class="input-group">
+        <input type="password" id="password" name="password" required placeholder=" ">
+        <label for="password">Password</label>
+      </div>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
