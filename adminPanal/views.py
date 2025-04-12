@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Task,Cobon
+
 # Create your views here.
 
 def adminPanal(request):
@@ -44,5 +45,6 @@ def DoneCobons(request, id):
     conText = {
         'Cobons': Cobon.objects.filter(active=True) 
     }
-    return render(request, 'adminPanal/cobon.html', conText)
+    # return render(request, 'adminPanal/cobon.html', conText)
+    return redirect('Cobons')
  
