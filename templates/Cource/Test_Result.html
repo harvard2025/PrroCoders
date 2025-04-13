@@ -3,59 +3,157 @@
 {% block body %}
 
 <style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     .result-container {
         text-align: center;
-        padding: 20px;
-        max-width: 500px;
-        margin: auto;
+        padding: 40px;
+        max-width: 600px;
+        margin: 40px auto;
         background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.8s ease, floatUp 0.8s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .result-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: {% if percentage >= 50 %} linear-gradient(90deg, #2ecc71, #27ae60) {% else %} linear-gradient(90deg, #e74c3c, #c0392b) {% endif %};
     }
 
     h1 {
-        color: #333;
+        color: #2c3e50;
+        font-size: 28px;
+        margin-bottom: 30px;
     }
 
     .score {
-        font-size: 22px;
-        margin: 15px 0;
+        font-size: 24px;
+        margin: 20px 0;
         font-weight: bold;
+        color: #34495e;
     }
 
     .percentage {
-        font-size: 24px;
-        color: {% if percentage >= 50 %} green {% else %} red {% endif %};
+        font-size: 42px;
+        font-weight: bold;
+        margin: 25px 0;
+        color: {% if percentage >= 50 %} #2ecc71 {% else %} #e74c3c {% endif %};
+        position: relative;
+        display: inline-block;
     }
-    .but{
-        color: black;
-        text-decoration: none;
-        margin: 10px;
-        font-size: 15px;
-        padding: 10px;
 
+    .percentage::after {
+        content: '';
+        position: absolute;
+        width: 120%;
+        height: 2px;
+        background-color: {% if percentage >= 50 %} #2ecc71 {% else %} #e74c3c {% endif %};
+        bottom: -10px;
+        left: -10%;
     }
-    .but:hover{
-        text-decoration: underline;
+
+    .result-status {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 20px 0;
+        padding: 10px 20px;
+        display: inline-block;
+        border-radius: 30px;
+        color: white;
+        background-color: {% if Succes == True %} #2ecc71 {% else %} #e74c3c {% endif %};
+        animation: pulse 2s infinite;
+    }
+
+    .action-button {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 12px 30px;
+        background-color: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 30px;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2);
+    }
+
+    .action-button:hover {
+        background-color: #2980b9;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .action-button:active {
+        transform: translateY(1px);
+    }
+
+    .retest-button {
+        background-color: #e74c3c;
+        box-shadow: 0 4px 10px rgba(231, 76, 60, 0.2);
+    }
+
+    .retest-button:hover {
+        background-color: #c0392b;
+        box-shadow: 0 6px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes floatUp {
+        from {
+            transform: translateY(20px);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 {% if Succes == True %} rgba(46, 204, 113, 0.4) {% else %} rgba(231, 76, 60, 0.4) {% endif %};
+        }
+        70% {
+            box-shadow: 0 0 0 10px {% if Succes == True %} rgba(46, 204, 113, 0) {% else %} rgba(231, 76, 60, 0) {% endif %};
+        }
+        100% {
+            box-shadow: 0 0 0 0 {% if Succes == True %} rgba(46, 204, 113, 0) {% else %} rgba(231, 76, 60, 0) {% endif %};
+        }
     }
 </style>
 
 <div class="result-container">
     <h1>{{ exam.Name }}</h1>
-    <p class="score">Result: {{ score }} / {{ total }}</p>
-    <p class="percentage">percentage: {{ percentage|floatformat:2 }}%</p>
-    {% if Succes == True %}
-        <h4 style="color: green; font-size: 20px; display:inline;">successful</h4>
-        <br><br>
-        <a href="{% url 'oneCource' exam.Lesson.Cource.id %}" class="but">Next</a>
-    {% elif Succes == False %}
-        <h4 style="color: rgb(135, 0, 0); font-size: 20px; display:inline;">fail</h4>
-        <br><br>
-        <a href="{% url 'Exam' exam.Lesson.id %}" class="but">Retest</a>
-    {% else %}
-        <h4>{{Succes}}</h4>
-    {% endif %}
+    <p class="score">Your Score: {{ score }} / {{ total }}</p>
+    <p class="percentage">{{ percentage|floatformat:0 }}%</p>
     
+    {% if Succes == True %}
+        <div class="result-status">Congratulations! You Passed</div>
+        <a href="{% url 'oneCource' exam.Lesson.Cource.id %}" class="action-button">Continue to Course</a>
+    {% elif Succes == False %}
+        <div class="result-status">Try Again</div>
+        <a href="{% url 'Exam' exam.Lesson.id %}" class="action-button retest-button">Retake Exam</a>
+    {% else %}
+        <div class="result-status">{{Succes}}</div>
+    {% endif %}
 </div>
 
 {% endblock %}

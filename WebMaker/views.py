@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from datetime import datetime
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 import random
 import string
 from adminPanal.models import Task, Cobon
@@ -148,7 +150,7 @@ def Send_Form(request):
         
         # Check if there's a discount coupon
         discount = 0
-        cobon_code = None
+        cobon_code = 0
         if 'isC' in request.POST:
             cobon_code = request.POST.get('cobon')
             
@@ -188,12 +190,37 @@ def Send_Form(request):
             Done=False
         )
         new_task.save()
-        context = {
-            'task': new_task,
-            'total_price': total_price,
-            'discount': discount,
-            'discount_amount': discount_amount,
-            'final_price': final_price,
-        }
+        # context = {
+        #     'task': new_task,
+        #     'total_price': total_price,
+        #     'discount': discount,
+        #     'discount_amount': discount_amount,
+        #     'final_price': final_price,
+        # }
         
-        return render(request, 'WebMakerT/price.html', context)
+        # return render(request, 'WebMakerT/price.html', context)
+    
+
+        redirect_url = reverse('price') + f'?task_id={new_task.id}&total_price={total_price}&discound={discount}&discound_amount={discount_amount}&final_price={final_price}'
+        return HttpResponseRedirect(redirect_url)
+    
+
+
+def price(request):
+    task_id = request.GET.get('task_id')
+    task = Task.objects.get(id=task_id)  # استرجاع الكائن من الـ ID
+    
+    total_price = request.GET.get('total_price')
+    discound = request.GET.get('discound')
+    discound_amount = request.GET.get('discound_amount')
+    final_price = request.GET.get('final_price')
+    
+    context = {
+        'task': task,
+        'total_price': total_price,
+        'discount': discound,
+        'discount_amount': discound_amount,
+        'final_price': final_price,
+    }
+    
+    return render(request, 'WebMakerT/price.html', context)

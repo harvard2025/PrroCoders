@@ -1,170 +1,381 @@
-
 {% extends 'layout.html' %}
-{% block title %}Admin: {{request.user}}{% endblock %}
+{% block title %}Admin Dashboard | {{request.user}}{% endblock %}
 {% block body %}
 {% load static %}
 
 <style>
-    .items-panal{
+    .admin-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    
+    .admin-header {
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .admin-header h1 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .admin-header p {
+        color: #7f8c8d;
+        font-size: 16px;
+    }
+    
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+    
+    .dashboard-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border-color: #3498db;
+    }
+    
+    .card-content {
+        padding: 25px;
         display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        list-style-type: none;
-
+        flex-direction: column;
+        align-items: flex-start;
     }
-    .item-panal{
-        margin: 10px;
-        background-color: #ffffff;
-        padding: 50px 30px;
-        font-size: 30px;
-        transition: 0.3s;
-        box-shadow: 3px 2px 7px rgba(0, 0, 0, 0.178);
+    
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 15px;
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    .link-panal{
+    
+    .card-icon img {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .card-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    
+    .card-desc {
+        font-size: 14px;
+        color: #7f8c8d;
+        margin-bottom: 15px;
+    }
+    
+    .card-link {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #3498db;
+        color: white;
+        border-radius: 4px;
         text-decoration: none;
-        color: black;
+        font-size: 14px;
+        transition: background-color 0.3s;
     }
-    .item-panal:hover{
-        scale: 1.1;
-        background-color: rgba(0, 78, 65, 0.183);
-        
-        
+    
+    .card-link:hover {
+        background-color: #2980b9;
+    }
+    
+    .error-container {
+        text-align: center;
+        padding: 50px 20px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .error-icon {
+        font-size: 60px;
+        color: #e74c3c;
+        margin-bottom: 20px;
+    }
+    
+    .error-title {
+        color: #e74c3c;
+        font-size: 28px;
+        margin-bottom: 15px;
+    }
+    
+    .error-message {
+        color: #7f8c8d;
+        font-size: 16px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+    
+    .user-highlight {
+        color: #e74c3c;
+        font-weight: 600;
+    }
 
+    @keyframes fadIn {
+        from{
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to{
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .dashboard-card{
+        animation: fadIn 0.5s ease-out forwards;
     }
 </style>
 
-{% if user.is_superuser %}
-
-    <ul class="items-panal">
-        <li class="item-panal">
-            <img src="{% static 'png/AddE.png' %}" alt="" width="30px">
-            <a class="link-panal" href="">Add Employe</a>
-        </li>
-    
-        <li class="item-panal">
-            <img src="{% static 'png/hr.png' %}" alt="" width="30px">
-            <a class="link-panal" href="">Add HR</a>
-        </li>
-
-        <li class="item-panal">
-            <img src="{% static 'png/task2.png' %}" alt="" width="30px">
-            <a class="link-panal" href="{% url 'Tasks' %}">Tasks</a>
-        </li>
-
-        <li class="item-panal">
-            <img src="{% static 'png/task2.png' %}" alt="" width="30px">
-            <a class="link-panal" href="">Done Projects</a>
-        </li>
-
-        <li class="item-panal">
-            <img src="{% static 'png/cobon.png' %}" alt="" width="30px">
-            <a class="link-panal" href="{% url 'Cobons' %}">Add Cobon</a>
-        </li>
-
-
-        <li class="item-panal">
-            <img src="{% static 'png/Manager.png' %}" alt="" width="30px">
-            <a class="link-panal" href="">Employe</a>
-        </li>
-
-        <li class="item-panal">
-            <img src="{% static 'png/Store.png' %}" alt="" width="30px">
-            <a class="link-panal" href="">Add to Store</a>
-        </li>
-
-        <li class="item-panal">
-            <img src="{% static 'png/Cource.png' %}" alt="" width="30px">
-            <a class="link-panal" href="/admin/CourcePanal/cource/add/">Add Cource</a>
-        </li>
-
-        <li class="item-panal">
-            <img src="{% static 'png/blog (1).png' %}" alt="" width="30px">
-            <a class="link-panal" href="">Add Blog</a>
-        </li>
-
-        <li class="item-panal">
-            <img src="{% static 'png/email (1).png' %}" alt="" width="30px">
-            <a class="link-panal" href="https://prrocodersmail.pythonanywhere.com/">Mail</a>
-        </li>
-    </ul>
-
-
-
-
-
-{% elif user.is_staff and not user.is_superuser %}
-    
-
-    <ul class="items-panal">
+<div class="admin-container">
+    {% if user.is_superuser %}
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <p>Welcome back, {{request.user.username}}. You have full administrative privileges.</p>
+        </div>
         
-        <li class="item-panal">
-            <img src="{% static 'png/task2.png' %}" alt="" width="30px">
-            <a class="link-panal" href="{% url 'Tasks' %}">Tasks</a>
-        </li>
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/AddE.png' %}" alt="Add Employee">
+                    </div>
+                    <h3 class="card-title">Add Employee</h3>
+                    <p class="card-desc">Add new employees to the system</p>
+                    <a href="" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/hr.png' %}" alt="Add HR">
+                    </div>
+                    <h3 class="card-title">Add HR</h3>
+                    <p class="card-desc">Manage human resources personnel</p>
+                    <a href="" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/task2.png' %}" alt="Tasks">
+                    </div>
+                    <h3 class="card-title">Tasks</h3>
+                    <p class="card-desc">View and manage all tasks</p>
+                    <a href="{% url 'Tasks' %}" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/done.png' %}" alt="Projects">
+                    </div>
+                    <h3 class="card-title">Done Projects</h3>
+                    <p class="card-desc">View completed projects</p>
+                    <a href="" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/cobon.png' %}" alt="Coupons">
+                    </div>
+                    <h3 class="card-title">Add Coupon</h3>
+                    <p class="card-desc">Create and manage discount coupons</p>
+                    <a href="{% url 'Cobons' %}" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/Manager.png' %}" alt="Employees">
+                    </div>
+                    <h3 class="card-title">Employees</h3>
+                    <p class="card-desc">Manage employee records</p>
+                    <a href="" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/Store.png' %}" alt="Store">
+                    </div>
+                    <h3 class="card-title">Add to Store</h3>
+                    <p class="card-desc">Manage store inventory</p>
+                    <a href="" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/Cource.png' %}" alt="Courses">
+                    </div>
+                    <h3 class="card-title">Add Course</h3>
+                    <p class="card-desc">Create new training courses</p>
+                    <a href="{% url 'Add_Cource' %}" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/blog (1).png' %}" alt="Blog">
+                    </div>
+                    <h3 class="card-title">Add Blog</h3>
+                    <p class="card-desc">Create and publish blog posts</p>
+                    <a href="" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/email (1).png' %}" alt="Mail">
+                    </div>
+                    <h3 class="card-title">Mail System</h3>
+                    <p class="card-desc">Access the email platform</p>
+                    <a href="https://prrocodersmail.pythonanywhere.com/" class="card-link">Access</a>
+                </div>
+            </div>
+        </div>
 
+    {% elif user.is_staff and not user.is_superuser %}
+        <div class="admin-header">
+            <h1>Staff Dashboard</h1>
+            <p>Welcome back, {{request.user.username}}. You have staff-level access.</p>
+        </div>
         
-        <li class="item-panal">
-            <img src="{% static 'png/task2.png' %}" alt="" width="30px">
-            <a class="link-panal" href="">Done Projects</a>
-        </li>
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/task2.png' %}" alt="Tasks">
+                    </div>
+                    <h3 class="card-title">Tasks</h3>
+                    <p class="card-desc">View and manage your tasks</p>
+                    <a href="{% url 'Tasks' %}" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/done.png' %}" alt="Projects">
+                    </div>
+                    <h3 class="card-title">Done Projects</h3>
+                    <p class="card-desc">View completed projects</p>
+                    <a href="" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/cobon.png' %}" alt="Coupons">
+                    </div>
+                    <h3 class="card-title">Add Coupon</h3>
+                    <p class="card-desc">Create discount coupons</p>
+                    <a href="{% url 'Cobons' %}" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/Store.png' %}" alt="Store">
+                    </div>
+                    <h3 class="card-title">Add to Store</h3>
+                    <p class="card-desc">Manage store inventory</p>
+                    <a href="" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/Cource.png' %}" alt="Courses">
+                    </div>
+                    <h3 class="card-title">Add Course</h3>
+                    <p class="card-desc">Create training courses</p>
+                    <a href="{% url 'Add_Cource' %}" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/blog (1).png' %}" alt="Blog">
+                    </div>
+                    <h3 class="card-title">Add Blog</h3>
+                    <p class="card-desc">Create blog posts</p>
+                    <a href="" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/Manager (2).png' %}" alt="Manager">
+                    </div>
+                    <h3 class="card-title">The Manager</h3>
+                    <p class="card-desc">Contact your manager</p>
+                    <a href="" class="card-link">Access</a>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/email (1).png' %}" alt="Mail">
+                    </div>
+                    <h3 class="card-title">Mail System</h3>
+                    <p class="card-desc">Access your emails</p>
+                    <a href="" class="card-link">Access</a>
+                </div>
+            </div>
+        </div>
 
-        <li class="item-panal">
-            <img src="{% static 'png/cobon.png' %}" alt="" width="30px">
-            <a class="link-panal" href="{% url 'Cobons' %}">Add Cobon</a>
-        </li>
-
-        <li class="item-panal">
-            <img src="{% static 'png/Store.png' %}" alt="" width="30px">
-            <a class="link-panal" href="">Add to Store</a>
-        </li>
-
-        <li class="item-panal">
-            <img src="{% static 'png/Cource.png' %}" alt="" width="30px">
-            <a class="link-panal" href="">Add Cource</a>
-        </li>
-
-        <li class="item-panal">
-            <img src="{% static 'png/blog (1).png' %}" alt="" width="30px">
-            <a class="link-panal" href="">Add Blog</a>
-        </li>
-
-        <li class="item-panal">
-            <img src="{% static 'png/Manager (2).png' %}" alt="" width="30px">
-            <a class="link-panal" href="">The Manager</a>
-        </li>
-
-        <li class="item-panal">
-            <img src="{% static 'png/email (1).png' %}" alt="" width="30px">
-            <a class="link-panal" href="">Mail</a>
-        </li>
-    </ul>
-
-{% else %}
-
-    <h1 style="color: rgb(137, 11, 11);">Error 404</h1>
-    <p style="color: rgb(130, 0, 0);">You Can't Enter This Page,
-        This Page only for admins.
-    </p>
-    <p><strong style="color: rgb(113, 4, 4); font-size: 20px; font-weight: 800;">{{request.user.username}}</strong> not Admin</p>
-
-{% endif %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    {% else %}
+        <div class="error-container">
+            <div class="error-icon">⚠️</div>
+            <h1 class="error-title">Access Denied</h1>
+            <p class="error-message">
+                You don't have permission to access this page. 
+                This area is restricted to authorized administrators only.
+            </p>
+            <p class="error-message">
+                User <span class="user-highlight">{{request.user.username}}</span> 
+                does not have admin privileges.
+            </p>
+        </div>
+    {% endif %}
+</div>
 
 {% endblock %}

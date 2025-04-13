@@ -1,101 +1,193 @@
 {% extends 'layout.html' %}
-{% block title %}Cources{% endblock %}
+{% block title %}Courses{% endblock %}
 {% block body %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'Cource/one.css' %}">
 <style>
-
     body {
-
-        background-color: #f4f4f4;
+        background-color: #f8f9fa;
         margin: 0;
         padding: 20px;
         text-align: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     h1 {
-        color: #333;
-        font-size: 28px;
-        margin-bottom: 20px;
+        color: #2c3e50;
+        font-size: 32px;
+        margin-bottom: 30px;
+        position: relative;
+        display: inline-block;
+    }
+
+    h1:after {
+        content: '';
+        position: absolute;
+        width: 70%;
+        height: 3px;
+        background-color: #3498db;
+        bottom: -10px;
+        left: 15%;
+        border-radius: 2px;
+        transition: width 0.3s ease;
+    }
+
+    h1:hover:after {
+        width: 100%;
+        left: 0;
     }
 
     .all-Questions {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 15px;
-        max-width: 600px;
+        gap: 20px;
+        max-width: 700px;
         margin: auto;
+        animation: fadeIn 0.8s ease-in-out;
     }
 
     .Q {
         background: #fff;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
         width: 100%;
         text-align: left;
-        padding-bottom: 20px;
+        padding-bottom: 25px;
+        border-left: 4px solid #3498db;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .Q:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     }
 
     h4 {
-        color: #555;
-        margin-bottom: 10px;
+        color: #34495e;
+        margin-bottom: 15px;
+        font-size: 18px;
     }
 
     select {
         width: 100%;
-        padding: 8px;
+        padding: 12px;
         font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
         cursor: pointer;
         background-color: #fff;
         transition: all 0.3s ease;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 15px;
     }
 
     select:hover, select:focus {
-        border-color: #007bff;
+        border-color: #3498db;
         outline: none;
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
     }
 
     .submit-btn {
-        margin-top: 20px;
-        background-color: #007bff;
+        margin-top: 30px;
+        background-color: #3498db;
         color: white;
         border: none;
-        padding: 10px 15px;
-        font-size: 16px;
-        border-radius: 5px;
+        padding: 12px 25px;
+        font-size: 18px;
+        border-radius: 8px;
         cursor: pointer;
         transition: 0.3s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
     }
 
     .submit-btn:hover {
-        background-color: #0056b3;
+        background-color: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
     }
 
-</style>
+    .submit-btn:active {
+        transform: translateY(1px);
+    }
 
+    .submit-btn:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0) 100%
+        );
+        transition: left 0.7s;
+    }
+
+    .submit-btn:hover:before {
+        left: 100%;
+    }
+
+    .admin {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .Admin {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #e74c3c;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .Admin:hover {
+        background-color: #c0392b;
+        transform: translateY(-2px);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 
 {% if user.is_staff  %}
 <div class="admin footer1" style="margin: 0;">
-    <a href="{% url 'Deleat_Exam' Exam.id %}" class="Admin">deleat Exam</a>
+    <a href="{% url 'Deleat_Exam' Exam.id %}" class="Admin">Delete Exam</a>
     <a href="{% url 'Q' Exam.id %}" class="Admin">Add Question</a>
 </div>
 {% endif %}
 
-
 <h1>{{ Exam.Name }}</h1>
 
-<!-- وضع جميع الأسئلة في نموذج واحد -->
 <form action="{% url 'submit_test' Exam.id %}" method="POST">
     {% csrf_token %}
     <div class="all-Questions">
         {% for q in Q %}
         <div class="Q">
             <h4>{{ q.Q }}</h4>
-            <select name="answer_{{ q.id }}">
+            <select name="answer_{{ q.id }}" required>
                 <option value="" disabled selected>Choose answer</option>
                 <option value="{{ q.answer1 }}">{{ q.answer1 }}</option>
                 <option value="{{ q.answer2 }}">{{ q.answer2 }}</option>
@@ -105,7 +197,7 @@
         {% endfor %}
     </div>
 
-    <input type="submit" value="Submit" class="submit-btn">
+    <input type="submit" value="Submit Answers" class="submit-btn">
 </form>
 <br>
 {% endblock %}

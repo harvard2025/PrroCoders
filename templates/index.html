@@ -1,49 +1,427 @@
 {% extends 'layout.html' %}
 
+{% block title %}PrroCoders - Professional Software Development & Training{% endblock title %}
+
+{% block head %}
+<style>
+    /* Hero Section */
+    .hero {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, #4a6bff 0%, #6d28d9 100%);
+        border-radius: 15px;
+        color: white;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .hero {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(255, 255, 255, 0.1)' fill-opacity='1' d='M0,192L48,186.7C96,181,192,171,288,186.7C384,203,480,245,576,234.7C672,224,768,160,864,144C960,128,1056,160,1152,176C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+        background-size: cover;
+        opacity: 0.3;
+    }
+
+    .hero-content {
+        max-width: 600px;
+        padding: 0 2rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-light {
+        background-color: white;
+        color: #4a6bff;
+    }
+
+    .btn-light:hover {
+        background-color: #f8fafc;
+        transform: translateY(-3px);
+    }
+
+    .btn-outline {
+        border: 2px solid white;
+        color: white;
+    }
+
+    .btn-outline:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateY(-3px);
+    }
+
+    /* Services Section */
+    .services {
+        margin-bottom: 4rem;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .section-title h2 {
+        font-size: 2.2rem;
+        color: #2d3748;
+        display: inline-block;
+    }
+
+    .section-title h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, #4a6bff, #6d28d9);
+        border-radius: 2px;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+        gap: 2rem;
+    }
+
+    .service-card {
+        background-color: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .service-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #4a6bff 0%, #6d28d9 100%);
+        border-radius: 50%;
+        margin-bottom: 1.5rem;
+        color: white;
+        font-size: 1.8rem;
+    }
+
+    .service-card h3 {
+        margin-bottom: 1rem;
+        color: #2d3748;
+    }
+
+    .service-card p {
+        color: #64748b;
+        line-height: 1.6;
+    }
+
+    /* Features Section */
+    .features {
+        margin-bottom: 4rem;
+        background-color: #f8fafc;
+        padding: 4rem 2rem;
+        border-radius: 15px;
+    }
+
+    .features-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .feature-item {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .feature-icon {
+        color: #4a6bff;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+        margin-top: 0.2rem;
+    }
+
+    .feature-text h3 {
+        margin-bottom: 0.5rem;
+        color: #2d3748;
+    }
+
+    .feature-text p {
+        color: #64748b;
+    }
+
+    /* Testimonials Section */
+    .testimonials {
+        margin-bottom: 4rem;
+    }
+
+    .testimonial-card {
+        background-color: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        position: relative;
+    }
+
+    .testimonial-text {
+        margin-bottom: 1.5rem;
+        color: #4a5568;
+        font-style: italic;
+        line-height: 1.7;
+    }
+
+    .testimonial-text::before {
+        content: '"';
+        font-size: 4rem;
+        position: absolute;
+        top: -20px;
+        left: 20px;
+        color: rgba(74, 107, 255, 0.1);
+        font-family: serif;
+    }
+
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #4a6bff;
+    }
+
+    .author-info h4 {
+        margin: 0;
+        color: #2d3748;
+    }
+
+    .author-info p {
+        margin: 0;
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    /* CTA Section */
+    .cta {
+        background: linear-gradient(135deg, #4a6bff 0%, #6d28d9 100%);
+        border-radius: 15px;
+        padding: 3rem 2rem;
+        text-align: center;
+        color: white;
+        margin-bottom: 4rem;
+    }
+
+    .cta h2 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta p {
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        opacity: 0.9;
+    }
+
+    /* Footer */
+    .footer {
+        text-align: center;
+        padding: 2rem 0;
+        color: #64748b;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+        .hero-buttons {
+            flex-direction: column;
+        }
+        .testimonial-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock head %}
+
 {% block body %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Transform Your Ideas Into Reality</h1>
+        <p>PrroCoders is a premier software development and training company, dedicated to building innovative digital solutions and nurturing the next generation of tech talent.</p>
+        <div class="hero-buttons">
+            <a href="{% url 'WebMaker' %}" class="btn btn-light">Start Your Project</a>
+            <a href="{% url 'Cource' %}" class="btn btn-outline">Explore Courses</a>
+        </div>
+    </div>
+</section>
 
+<!-- Services Section -->
+<section class="services">
+    <div class="section-title">
+        <h2>Our Services</h2>
+    </div>
+    <div class="services-grid">
+        <div class="service-card">
+            <div class="service-icon">
+                <i class="fas fa-code"></i>
+            </div>
+            <h3>Custom Software Development</h3>
+            <p>Tailored software solutions designed to meet your specific business requirements and challenges.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">
+                <i class="fas fa-laptop-code"></i>
+            </div>
+            <h3>Professional Training</h3>
+            <p>Comprehensive coding courses taught by industry experts to help you master in-demand technologies.</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">
+                <i class="fas fa-globe"></i>
+            </div>
+            <h3>Web Development</h3>
+            <p>Modern, responsive websites and web applications built with the latest technologies and best practices.</p>
+        </div>
+    </div>
+</section>
 
+<!-- Features Section -->
+<section class="features">
+    <div class="section-title">
+        <h2>Why Choose Us</h2>
+    </div>
+    <div class="features-content">
 
+        <div class="feature-item">
+            <div class="feature-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="feature-text">
+                <h3>Quality Assurance</h3>
+                <p>Rigorous testing ensures your software performs flawlessly under all conditions.</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="feature-text">
+                <h3>Practical Learning</h3>
+                <p>Our courses focus on real-world applications, not just theory.</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="feature-text">
+                <h3>Ongoing Support</h3>
+                <p>We provide continuous maintenance and support for all our solutions.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
+<!-- Testimonials Section -->
+<section class="testimonials">
+    <div class="section-title">
+        <h2>Client Testimonials</h2>
+    </div>
+    <div class="services-grid">
+        <div class="testimonial-card">
+            <p class="testimonial-text">PrroCoders developed an e-commerce platform that has transformed our business. Their team was professional, responsive, and delivered a high-quality product on schedule.</p>
+            <div class="testimonial-author">
+                <div class="author-avatar">AM</div>
+                <div class="author-info">
+                    <h4>Ali Mohammed</h4>
+                    <p>CEO, TechRetail</p>
+                </div>
+            </div>
+        </div>
+        <div class="testimonial-card">
+            <p class="testimonial-text">The web development course exceeded my expectations. The instructors were knowledgeable and the curriculum was both challenging and engaging. I landed a job within a month of completion!</p>
+            <div class="testimonial-author">
+                <div class="author-avatar">SH</div>
+                <div class="author-info">
+                    <h4>Sara Hassan</h4>
+                    <p>Web Developer</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
+<!-- CTA Section -->
+<section class="cta">
+    <h2>Ready to Start Your Digital Journey?</h2>
+    <p>Whether you need a custom software solution or want to enhance your coding skills, we've got you covered.</p>
+    <div class="hero-buttons">
+        <a href="{% url 'WebMaker' %}" class="btn btn-light">Contact Us</a>
+        <a href="{% url 'register' %}" class="btn btn-outline">Join Our Community</a>
+    </div>
+</section>
 
-
-
-
-
-
-<h1>Hello Wordld</h1>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!-- Footer -->
+<div class="footer">
+    <p>&copy; 2025 PrroCoders. All rights reserved.</p>
+</div>
 {% endblock body %}

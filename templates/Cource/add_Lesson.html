@@ -1,70 +1,201 @@
 {% extends 'layout.html' %}
-{% block title %}Cources{% endblock %}
+{% block title %}Add New Lesson{% endblock %}
 {% block body %}
 {% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
 <style>
-    form{
-        margin-top: 30px;
+    .lesson-form-container {
+        max-width: 700px;
+        margin: 40px auto;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+        border-radius: 18px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .lesson-title {
+        text-align: center;
+        color: #2c3e50;
+        font-size: 2rem;
+        margin-bottom: 25px;
+        font-weight: 700;
+        position: relative;
+        padding-bottom: 10px;
+    }
+    
+    .lesson-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: #9b59b6;
+        border-radius: 2px;
+    }
+    
+    .course-name {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+    
+    form {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        align-content: center;
-        gap: 10px;
+        gap: 18px;
     }
-    form > input[type=text]{
+    
+    .form-group {
+        width: 100%;
+        position: relative;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #34495e;
+        font-size: 0.95rem;
+    }
+    
+    form > input[type=text] {
         width: 90%;
-        height: 40px;
-        border: 1px solid black;
-        border-radius: 25px;
-        padding: 10px;
-        font-size: 20px;
+        height: 50px;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: white;
+        color: #2c3e50;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
-    .submit{
-        border: 0.1px solid rgba(0, 0, 0, 0.217);
-        border-radius: 25px;
-        padding: 10px 20px;
-        background-color: rgb(254, 254, 254);
-        transition: 0.3s;
-        margin-top: 20px;
-
+    
+    form > input[type=text]:focus {
+        border-color: #9b59b6;
+        box-shadow: 0 5px 15px rgba(155, 89, 182, 0.15);
+        outline: none;
     }
-    .submit:hover{
-
+    
+    .submit {
+        margin-top: 25px;
+        background: linear-gradient(45deg, #9b59b6, #8e44ad);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
+    }
+    
+    .submit:hover {
         transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(155, 89, 182, 0.4);
+    }
+    
+    .icon-video {
+        position: absolute;
+        top: -30px;
+        right: 30px;
+        font-size: 2.5rem;
+        color: #9b59b6;
+        opacity: 0.6;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 0.6;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 0.6;
+        }
+    }
+    
+    .decoration-circle {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(155, 89, 182, 0.1) 0%, rgba(155, 89, 182, 0) 70%);
+        z-index: 0;
+    }
+    
+    .decoration-circle-1 {
+        top: -100px;
+        left: -100px;
+    }
+    
+    .decoration-circle-2 {
+        bottom: -80px;
+        right: -80px;
+    }
+    
+    .form-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .youtube-helper {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        margin-top: -12px;
+        margin-left: 5%;
     }
 </style>
 
+<div class="lesson-form-container animate__animated animate__fadeIn">
+    <div class="decoration-circle decoration-circle-1"></div>
+    <div class="decoration-circle decoration-circle-2"></div>
+    
+    <div class="form-content">
+        <h2 class="lesson-title">Add New Lesson</h2>
+        <p class="course-name">For Course: <strong>{{Cource.Name}}</strong></p>
+        <i class="fas fa-video icon-video"></i>
+        
+        <form action="{% url 'Create_Lesson' Cource.id %}" method="post" class="animate__animated animate__fadeInUp">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label">YouTube Video URL</label>
+                <input type="text" name="url" placeholder="https://www.youtube.com/watch?v=..." required style="height: 30px; width: 90%; border-radius: 18px; border: 1px solid black; padding: 10px;">
 
-<form action="{% url 'Create_Lesson' Cource.id %}" method="post">
-    {% csrf_token %}
-    <input type="text" name="url" class="url" placeholder="Enter The Lesson youtube URL">
-    <input type="text" name="Name" class="name" placeholder="Enter The Lesson Name">
-    <input type="text" name="description" class="des" placeholder="Enter The Lesson description">
-    <input type="hidden" name="Cource" class="cource" value="{{Cource.id}}">
-    <input type="submit" class="submit" value="Create Lesson">
-</form>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Lesson Title</label>
+                <input type="text" name="Name" placeholder="Enter a descriptive title for this lesson" required style="height: 30px; width: 90%; border-radius: 18px; border: 1px solid black; padding: 10px;">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <input type="text" name="description" placeholder="Brief description of what students will learn"  style="height: 30px; width: 90%; border-radius: 18px; border: 1px solid black; padding: 10px;">
+            </div>
+            
+            <input type="hidden" name="Cource" value="{{Cource.id}}">
+            
+            <input type="submit" class="submit" value="Create Lesson">
+        </form>
+    </div>
+</div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 {% endblock %}

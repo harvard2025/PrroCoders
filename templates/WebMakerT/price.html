@@ -115,6 +115,7 @@
 <div class="invoice-container">
     <div class="invoice-header">
         <h1 class="invoice-title">Website Development Invoice</h1>
+        <p class="invoice-subtitle">id: #<span style="color: #2a5298; font-weight: 700;">{{task.id}}</span></p>
         <p class="invoice-subtitle">Date: {{ task.Date }}</p>
     </div>
     
@@ -180,13 +181,13 @@
             <span>Subtotal:</span>
             <span>${{ total_price|floatformat:2 }}</span>
         </div>
-        
-        {% if discount > 0 %}
-        <div class="total-row">
-            <span>Discount ({{ discount }}%):</span>
-            <span class="discount">-${{ discount_amount|floatformat:2 }}</span>
-        </div>
-        {% endif %}
+
+
+    <div class="total-row">
+        <span>Discount ({{ discount }}%):</span>
+        <span class="discount">-${{ discount_amount|floatformat:2 }}</span>
+    </div>
+
         
         <div class="total-row grand-total">
             <span>Total:</span>

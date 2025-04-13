@@ -1,61 +1,240 @@
 {% extends 'layout.html' %}
-{% block title %}Cources{% endblock %}
+{% block title %}Courses{% endblock %}
 {% block body %}
 {% load static %}
 
 <link rel="stylesheet" href="{% static 'Cource/style.css' %}">
 
-{% if user.is_staff  %}
+{% if user.is_staff %}
 <div class="admin footer1">
-    <a href="{% url 'Add_Cource' %}" class="Admin">Add Cource</a>
+    <a href="{% url 'Add_Cource' %}" class="Admin">Add New Course</a>
 </div>
 {% endif %}
 
 <div class="Cources">
-
-
-
     {% for Cource in Cources %}
         {% if Cource.isActive == True %}
             <a href="{% url 'oneCource' Cource.id %}" class="a-Cource">
                 <div class="Cource">
-                    {% if Cource.image %}
-                        <img src="{{ Cource.image.url }}" alt="Course Image" width="70px" class="img">
-                    {% else %}
-                        <img src="/media/default.png" alt="Default Image" width="70px" class="img">
-                    {% endif %}
-
-                    <h1 class="name">{{Cource.Name}}</h1>
-                    <p class="des">{{Cource.description}}</p>
-                    {% if Cource.price == 0 %}
-                        <h4 class="free "><strong>Free</strong></h4>
-                    {% else %}
-                        <h4 class="price"><strong>{{Cource.price}}</strong>$</h4>
-                    {% endif %}
+                    <div class="img-container">
+                        {% if Cource.image %}
+                            <img src="{{ Cource.image.url }}" alt="Course Image" class="img">
+                        {% else %}
+                            <img src="/media/default.png" alt="Default Image" class="img">
+                        {% endif %}
+                        <div class="img-overlay"></div>
+                        <div class="badge">Featured</div>
+                    </div>
                     
+                    <div class="course-content">
+                        <h1 class="name">{{Cource.Name}}</h1>
+                        <p class="des">{{Cource.description}}</p>
+                    </div>
+                    
+                    <div class="course-footer">
+                        <div class="price-tag">
+                            {% if Cource.price == 0 %}
+                                <h4 class="free"><strong>Free</strong></h4>
+                            {% else %}
+                                <h4 class="price"><strong>{{Cource.price}}$</strong></h4>
+                            {% endif %}
+                        </div>
+                        <button class="learn-more">Learn More</button>
+                    </div>
                 </div>
             </a>
         {% endif %}
-
     {% endfor %}
 </div>
 
+<script>
+    // Staggered animation for course cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const courses = document.querySelectorAll('.a-Cource');
+        
+        // Reset opacity and transform for JavaScript animation
+        courses.forEach((course, index) => {
+            course.style.opacity = '0';
+            course.style.transform = 'translateY(20px)';
+            
+            // Add delay based on index
+            setTimeout(() => {
+                course.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                course.style.opacity = '1';
+                course.style.transform = 'translateY(0)';
+            }, 100 + (index * 100));
+        });
+        
+        // Optional: Add skeleton loading effect
+        setTimeout(() => {
+            document.querySelectorAll('.skeleton').forEach(item => {
+                item.classList.remove('skeleton');
+            });
+        }, 800);
+    });
+</script>
 
 
-{% if user.is_authenticated %}
+<script>
+        // Create a new file: static/Cource/animations.js
 
-
-
-{% endif %}
-
-
-
-
-
-
-
-
-
-
-
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elements for animation
+        const courseCards = document.querySelectorAll('.Cource');
+        const badges = document.querySelectorAll('.badge');
+        const learnButtons = document.querySelectorAll('.learn-more');
+        
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        
+        // Observe each course card
+        courseCards.forEach(card => {
+            observer.observe(card);
+        });
+        
+        // Course card hover effects
+        courseCards.forEach((card, index) => {
+            const image = card.querySelector('.img');
+            const overlay = card.querySelector('.img-overlay');
+            const badge = card.querySelector('.badge');
+            const learnButton = card.querySelector('.learn-more');
+            
+            // Mouse enter animation
+            card.addEventListener('mouseenter', () => {
+                image.style.transform = 'scale(1.08)';
+                overlay.style.opacity = '1';
+                
+                if (badge) {
+                    badge.style.opacity = '1';
+                    badge.style.transform = 'translateY(0)';
+                }
+                
+                if (learnButton) {
+                    learnButton.style.opacity = '1';
+                    learnButton.style.transform = 'translateY(0)';
+                }
+            });
+            
+            // Mouse leave animation
+            card.addEventListener('mouseleave', () => {
+                image.style.transform = 'scale(1)';
+                overlay.style.opacity = '0';
+                
+                if (badge) {
+                    badge.style.opacity = '0';
+                    badge.style.transform = 'translateY(-10px)';
+                }
+                
+                if (learnButton) {
+                    learnButton.style.opacity = '0';
+                    learnButton.style.transform = 'translateY(10px)';
+                }
+            });
+        });
+        
+        // Filter animation (for potential future filtering functionality)
+        function setUpFiltering() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            if (filterButtons.length === 0) return;
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const filterValue = button.getAttribute('data-filter');
+                    
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Filter courses
+                    courseCards.forEach(card => {
+                        const cardParent = card.parentElement;
+                        if (filterValue === 'all') {
+                            cardParent.style.display = 'block';
+                            setTimeout(() => {
+                                cardParent.style.opacity = '1';
+                                cardParent.style.transform = 'translateY(0)';
+                            }, 50);
+                        } else {
+                            if (card.getAttribute('data-category') === filterValue) {
+                                cardParent.style.display = 'block';
+                                setTimeout(() => {
+                                    cardParent.style.opacity = '1';
+                                    cardParent.style.transform = 'translateY(0)';
+                                }, 50);
+                            } else {
+                                cardParent.style.opacity = '0';
+                                cardParent.style.transform = 'translateY(20px)';
+                                setTimeout(() => {
+                                    cardParent.style.display = 'none';
+                                }, 300);
+                            }
+                        }
+                    });
+                });
+            });
+        }
+        
+        // Initialize filtering if needed
+        setUpFiltering();
+        
+        // Progress bar animation for course completion (for future use)
+        function initializeProgressBars() {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            
+            progressBars.forEach(progressBar => {
+                const progress = progressBar.getAttribute('data-progress');
+                progressBar.style.width = '0%';
+                
+                setTimeout(() => {
+                    progressBar.style.transition = 'width 1s ease-in-out';
+                    progressBar.style.width = progress + '%';
+                }, 300);
+            });
+        }
+        
+        // Implement search highlight animation (for future search functionality)
+        function setupSearch() {
+            const searchInput = document.querySelector('.search-input');
+            if (!searchInput) return;
+            
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase().trim();
+                
+                courseCards.forEach(card => {
+                    const cardTitle = card.querySelector('.name').textContent.toLowerCase();
+                    const cardDesc = card.querySelector('.des').textContent.toLowerCase();
+                    
+                    if (searchTerm === '') {
+                        // Reset all cards
+                        card.style.transform = 'scale(1)';
+                        card.style.boxShadow = 'var(--card-shadow)';
+                    } else if (cardTitle.includes(searchTerm) || cardDesc.includes(searchTerm)) {
+                        // Highlight matching cards
+                        card.style.transform = 'scale(1.03)';
+                        card.style.boxShadow = '0 15px 30px rgba(0, 118, 219, 0.2)';
+                    } else {
+                        // Dim non-matching cards
+                        card.style.transform = 'scale(0.98)';
+                        card.style.boxShadow = '0 5px 10px rgba(0, 0, 0, 0.05)';
+                    }
+                });
+            });
+        }
+        
+        // Initialize functionality
+        setupSearch();
+        initializeProgressBars();
+    });
+</script>
 {% endblock %}

@@ -1,8 +1,10 @@
 body{
     background: linear-gradient(90deg, #ffffffaf 0%, #e8e8e8c1 50%, #ffffff 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .navbar1{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
