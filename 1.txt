@@ -1,0 +1,26 @@
+@echo off
+git config --global --add safe.directory 'D:/proggraming/Web Development/PrroCoders/V4/PrroCoders'
+git remote https://github.com/harvard2025/PrroCoders.git
+echo Initializing Git repository...
+git init
+
+echo Adding all files to staging...
+git add .
+
+echo Committing changes...
+git commit -m "V4"
+
+
+git config --global --add safe.directory 'D:/proggraming/Web Development/PrroCoders/V4/PrroCoders'
+
+git config --global --add safe.directory 'D:/proggraming/Web Development/PrroCoders/V4/PrroCoders'
+
+git config --global --add safe.directory 'D:/proggraming/Web Development/PrroCoders/V4/PrroCoders'
+
+echo Linking to GitHub repository...
+git remote add origin https://github.com/harvard2025/PrroCoders.git
+
+echo Pushing to GitHub (master branch)...
+git push -u origin master
+
+pause

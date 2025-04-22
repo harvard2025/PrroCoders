@@ -1,0 +1,222 @@
+{% extends 'layout.html' %}
+{% block title %}Admin Tasks: {{request.user}}{% endblock %}
+{% block body %}
+{% load static %}
+{% if user.is_superuser or user.is_staff %}
+
+<style>
+    body {
+        /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+        background-color: #f4f6f9;
+        margin: 0;
+        padding: 0;
+    }
+
+    .Tasks {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .Task {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+        text-decoration: none;
+        color: #2c3e50;
+        width: 300px;
+        text-align: center;
+        border-left: 5px solid #2c3e50;
+    }
+
+    .Task:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+        border-left: 5px solid #2980b9;
+    }
+
+    .Task h2 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+        color: #34495e;
+    }
+
+    .Task h4 {
+        font-size: 1.1em;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .Task p {
+        font-size: 0.9em;
+        color: #888;
+        margin-bottom: 15px;
+    }
+
+    .task-date {
+        background-color: #ecf0f1;
+        padding: 5px 10px;
+        border-radius: 4px;
+        display: inline-block;
+        font-size: 0.85em;
+        margin-top: 10px;
+        color: #7f8c8d;
+    }
+
+    .view-details {
+        background: #3498db;
+        color: #ffffff;
+        padding: 8px 20px;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 15px;
+    }
+    
+    .view-details:hover {
+        background: #2980b9;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 2.5em;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #2c3e50;
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .task-filters {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .filter-btn {
+        background: #ecf0f1;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+        background: #3498db;
+        color: white;
+    }
+
+    .error-container {
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .error-container h1 {
+        color: rgb(137, 11, 11);
+        font-size: 3em;
+        margin-bottom: 10px;
+    }
+
+    .error-container p {
+        color: rgb(130, 0, 0);
+        font-size: 1.2em;
+    }
+
+    .error-container strong {
+        color: rgb(113, 4, 4);
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    @keyframes fadIn {
+        from{
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to{
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .Task{
+        animation: fadIn 0.3s ease-out forwards;
+    }
+</style>
+
+<h1 class='title'>Manage Client Tasks</h1>
+
+<div class="task-filters">
+    <button class="filter-btn active" onclick="filterTasks('all')">All Tasks</button>
+    <button class="filter-btn" onclick="filterTasks('domain')">Domain Tasks</button>
+    <button class="filter-btn" onclick="filterTasks('dynamic')">Dynamic Tasks</button>
+    <button class="filter-btn" onclick="filterTasks('database')">Database Tasks</button>
+</div>
+
+<div class="Tasks">
+    {% for task in Tasks %}
+        <div class="Task task-item" 
+             data-domain="{% if task.Domain %}true{% else %}false{% endif %}"
+             data-dynamic="{% if task.Dynamic %}true{% else %}false{% endif %}"
+             data-db="{% if task.DB %}true{% else %}false{% endif %}">
+            <h2>{{ task.name }}</h2>
+            <h4>{{ task.idea }}</h4>
+            <p>{{ task.desc|truncatechars:100 }}</p>
+            <p class="task-date">Added: {{ task.Date }}</p>
+            <a href="{% url 'Task' task.id %}" class="view-details">View Details</a>
+        </div>
+    {% empty %}
+        <div style="text-align: center; width: 100%; padding: 50px 0;">
+            <h2>No Tasks Available</h2>
+            <p>There are currently no active tasks in the system.</p>
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+    function filterTasks(type) {
+        // Update active button
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // Filter tasks
+        const tasks = document.querySelectorAll('.task-item');
+        tasks.forEach(task => {
+            if (type === 'all') {
+                task.style.display = 'block';
+                task.style.animation = 'fadIn';
+            } else if (type === 'domain') {
+                task.style.display = task.dataset.domain === 'true' ? 'block' : 'none';
+                task.style.animation = 'fadIn';
+            } else if (type === 'dynamic') {
+                task.style.display = task.dataset.dynamic === 'true' ? 'block' : 'none';
+                task.style.animation = 'fadIn';
+            } else if (type === 'database') {
+                task.style.display = task.dataset.db === 'true' ? 'block' : 'none';
+                task.style.animation = 'fadIn';
+            }
+        });
+    }
+</script>
+
+{% else %}
+<div class="error-container">
+    <h1>Error 404</h1>
+    <p>You Can't Enter This Page, This Page only for admins.</p>
+    <p><strong>{{request.user.username}}</strong> not Admin</p>
+</div>
+{% endif %}
+{% endblock %}

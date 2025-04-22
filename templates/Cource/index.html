@@ -14,7 +14,8 @@
 <div class="Cources">
     {% for Cource in Cources %}
         {% if Cource.isActive == True %}
-            <a href="{% url 'oneCource' Cource.id %}" class="a-Cource">
+        
+            <a href="{% if user.is_authenticated %}{% url 'oneCource' Cource.id %}{% else %}{% url 'Login' %}{% endif %}" class="a-Cource">
                 <div class="Cource">
                     <div class="img-container">
                         {% if Cource.image %}
