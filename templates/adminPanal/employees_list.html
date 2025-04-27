@@ -1,0 +1,295 @@
+{% extends 'layout.html' %}
+{% block title %}Employee Management | Admin Panel{% endblock %}
+{% block body %}
+{% load static %}
+
+<style>
+    .admin-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    
+    .admin-header {
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .admin-header h1 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .admin-header p {
+        color: #7f8c8d;
+        font-size: 16px;
+    }
+    
+    .btn-primary {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2980b9;
+    }
+    
+    .filter-section {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+    
+    .filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .filter-group label {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 5px;
+        color: #2c3e50;
+    }
+    
+    .filter-input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    
+    .filter-button {
+        align-self: flex-end;
+        margin-top: 16px;
+    }
+    
+    .employees-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .employee-card {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .employee-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .employee-header {
+        background-color: #3498db;
+        color: white;
+        padding: 15px;
+        position: relative;
+    }
+    
+    .employee-name {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .employee-job {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+    
+    .employee-content {
+        padding: 15px;
+    }
+    
+    .employee-detail {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: #555;
+    }
+    
+    .employee-detail i {
+        margin-right: 10px;
+        color: #3498db;
+        width: 16px;
+        text-align: center;
+    }
+    
+    .employee-footer {
+        display: flex;
+        padding: 15px;
+        border-top: 1px solid #eee;
+        justify-content: space-between;
+    }
+    
+    .employee-action {
+        padding: 6px 12px;
+        font-size: 13px;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .view-action {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+    
+    .edit-action {
+        background-color: #2ecc71;
+        color: white;
+    }
+    
+    .terminate-action {
+        background-color: #e74c3c;
+        color: white;
+    }
+    
+    .employee-status {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #2ecc71;
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: 40px;
+        grid-column: 1 / -1;
+    }
+    
+    .no-results p {
+        font-size: 16px;
+        color: #7f8c8d;
+    }
+</style>
+
+<div class="admin-container">
+    {% if user.is_superuser %}
+        <div class="admin-header">
+            <div>
+                <h1>Employee Management</h1>
+                <p>Manage your organization's employees.</p>
+            </div>
+            <a href="{% url 'addEmployee' %}" class="btn-primary">Add New Employee</a>
+        </div>
+        
+        <div class="filter-section">
+            <form class="filter-form" method="GET">
+                <div class="filter-group">
+                    <label for="search">Search</label>
+                    <input type="text" id="search" name="search" class="filter-input" placeholder="Name or email..." value="{{ search_query }}">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="job">Filter by Job</label>
+                    <select id="job" name="job" class="filter-input">
+                        <option value="">All Jobs</option>
+                        {% for job in jobs %}
+                            <option value="{{ job.name }}" {% if job.name == job_filter %}selected{% endif %}>{{ job.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="sort">Sort By</label>
+                    <select id="sort" name="sort" class="filter-input">
+                        <option value="First_name" {% if sort_by == 'First_name' %}selected{% endif %}>First Name</option>
+                        <option value="Last_name" {% if sort_by == 'Last_name' %}selected{% endif %}>Last Name</option>
+                        <option value="job" {% if sort_by == 'job' %}selected{% endif %}>Job Title</option>
+                        <option value="Sday" {% if sort_by == 'Sday' %}selected{% endif %}>Start Date</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-primary filter-button">Apply Filters</button>
+            </form>
+        </div>
+        
+        <div class="employees-grid">
+            {% if employees %}
+                {% for employee in employees %}
+                    <div class="employee-card">
+                        <div class="employee-header">
+                            <div class="employee-status"></div>
+                            <h3 class="employee-name">{{ employee.First_name }} {{ employee.Last_name }}</h3>
+                            <div class="employee-job">{{ employee.job }}</div>
+                        </div>
+                        <div class="employee-content">
+                            <div class="employee-detail">
+                                <i class="fas fa-envelope"></i>
+                                <span>{{ employee.email }}</span>
+                            </div>
+                            <div class="employee-detail">
+                                <i class="fas fa-phone"></i>
+                                <span>{{ employee.number }}</span>
+                            </div>
+                            <div class="employee-detail">
+                                <i class="fas fa-calendar"></i>
+                                <span>Joined: {{ employee.Sday }}/{{ employee.Smonth }}/{{ employee.Syear }}</span>
+                            </div>
+                        </div>
+                        <div class="employee-footer">
+                            <a href="{% url 'employee_detail' employee.id %}" class="employee-action view-action">View</a>
+                            <a href="{% url 'editEmployee' employee.id %}" class="employee-action edit-action">Edit</a>
+                            <a href="{% url 'terminateEmployee' employee.id %}" class="employee-action terminate-action">Terminate</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-results">
+                    <p>No employees found matching your criteria.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+    {% else %}
+        <div class="error-container">
+            <div class="error-icon">⚠️</div>
+            <h1 class="error-title">Access Denied</h1>
+            <p class="error-message">
+                You don't have permission to access this page. 
+                This area is restricted to authorized administrators only.
+            </p>
+            <p class="error-message">
+                User <span class="user-highlight">{{request.user.username}}</span> 
+                does not have admin privileges.
+            </p>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

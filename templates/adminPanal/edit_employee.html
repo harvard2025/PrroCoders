@@ -1,0 +1,313 @@
+{% extends 'layout.html' %}
+{% block title %}Edit Employee | Admin Panel{% endblock %}
+{% block body %}
+{% load static %}
+
+<style>
+    .admin-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .admin-header {
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .admin-header h1 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .admin-header p {
+        color: #7f8c8d;
+        font-size: 16px;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-secondary {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+    
+    .form-section {
+        margin-bottom: 25px;
+    }
+    
+    .form-section h3 {
+        font-size: 18px;
+        color: #3498db;
+        margin-bottom: 15px;
+    }
+    
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -10px;
+    }
+    
+    .form-group {
+        flex: 1 0 calc(50% - 20px);
+        margin: 0 10px 15px;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+        border-color: #3498db;
+        outline: none;
+    }
+    
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #2c3e50;
+        font-size: 14px;
+    }
+    
+    .btn-primary {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2980b9;
+    }
+    
+    .error-message {
+        color: #e74c3c;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    
+    .full-width {
+        flex: 1 0 calc(100% - 20px);
+    }
+    
+    .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+    }
+    
+    .file-input-wrapper input[type=file] {
+        font-size: 100px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+    
+    .file-input-button {
+        display: inline-block;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px 16px;
+        font-size: 14px;
+        color: #333;
+    }
+    
+    .file-name {
+        margin-left: 10px;
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .password-notice {
+        font-size: 13px;
+        color: #7f8c8d;
+        margin-top: 5px;
+        font-style: italic;
+    }
+    
+    .current-cv {
+        font-size: 13px;
+        color: #3498db;
+        margin-top: 5px;
+    }
+</style>
+
+<div class="admin-container">
+    {% if user.is_superuser %}
+        <div class="admin-header">
+            <div>
+                <h1>Edit Employee</h1>
+                <p>Update information for {{ employee.First_name }} {{ employee.Last_name }}</p>
+            </div>
+            <a href="{% url 'employee_detail' employee.id %}" class="btn btn-secondary">Back to Profile</a>
+        </div>
+
+        {% if message %}
+            <div class="error-message">{{ message }}</div>
+        {% endif %}
+
+        <form action="{% url 'editEmployee' employee.id %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <h3>Personal Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Fname">First Name</label>
+                        <input class="form-control" id="Fname" type="text" name="Fname" value="{{ employee.First_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Lname">Last Name</label>
+                        <input class="form-control" id="Lname" type="text" name="Lname" value="{{ employee.Last_name }}" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input class="form-control" id="email" type="email" name="email" value="{{ employee.email }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="number">Phone Number</label>
+                        <input class="form-control" id="number" type="text" name="number" value="{{ employee.number }}" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>Account Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input class="form-control" id="username" type="text" name="username" value="{{ employee.user_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="job">Job Title</label>
+                        <select class="form-control" id="job" name="job" required>
+                            
+                                {% if  employee.job == 'HR' %}
+                                    <option value="HR" {% if job.name == employee.job %}selected{% endif %}>HR</option>
+                                {% else %}
+                                    {% for job in jobs %}
+                                        {% if not job.name == 'HR' %}
+                                            <option value="{{ job.name }}" {% if job.name == employee.job %}selected{% endif %}>{{ job.name }}</option>
+
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input class="form-control" id="password" type="password" name="password">
+                        <div class="password-notice">Leave blank to keep current password</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="conpassword">Confirm Password</label>
+                        <input class="form-control" id="conpassword" type="password" name="conpassword">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>Employment Details</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="salary">Salary</label>
+                        <input class="form-control" id="salary" type="text" name="salary" value="{{ employee.salary }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="portfolio">Portfolio URL</label>
+                        <input class="form-control" id="portfolio" type="url" name="portfolio" value="{{ employee.prto }}" placeholder="https://...">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="cv">CV/Resume</label>
+                        <div class="file-input-wrapper">
+                            <button class="file-input-button" type="button">Choose File</button>
+                            <input id="cv" type="file" name="cv">
+                            <span class="file-name" id="file-name">No file chosen</span>
+                        </div>
+                        {% if employee.cv %}
+                            <div class="current-cv">Current CV: {{ employee.cv.name }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="about">About</label>
+                        <textarea class="form-control" id="about" name="about">{{ employee.about }}</textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit">Update Employee</button>
+                </div>
+            </div>
+        </form>
+    {% else %}
+        <div class="error-container">
+            <div class="error-icon">⚠️</div>
+            <h1 class="error-title">Access Denied</h1>
+            <p class="error-message">
+                You don't have permission to access this page. 
+                This area is restricted to authorized administrators only.
+            </p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    // Display selected file name
+    document.getElementById('cv').addEventListener('change', function() {
+        const fileName = this.files[0]?.name || 'No file chosen';
+        document.getElementById('file-name').textContent = fileName;
+    });
+</script>
+
+{% endblock %}

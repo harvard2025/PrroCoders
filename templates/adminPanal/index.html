@@ -173,9 +173,23 @@
                     </div>
                     <h3 class="card-title">Add HR</h3>
                     <p class="card-desc">Manage human resources personnel</p>
-                    <a href="" class="card-link">Access</a>
+                    <a href="{% url 'HR' %}" class="card-link">Access</a>
                 </div>
             </div>
+
+
+
+            <div class="dashboard-card">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <img src="{% static 'png/employer.png' %}" alt="Add Job">
+                    </div>
+                    <h3 class="card-title">Jobs</h3>
+                    <p class="card-desc">Add new Jobs To Your system</p>
+                    <a href="{% url 'addJob' %}" class="card-link">Access</a>
+                </div>
+            </div>
+
             
             <div class="dashboard-card">
                 <div class="card-content">
@@ -217,7 +231,7 @@
                     </div>
                     <h3 class="card-title">Employees</h3>
                     <p class="card-desc">Manage employee records</p>
-                    <a href="" class="card-link">Access</a>
+                    <a href="{% url 'employees_list' %}" class="card-link">Access</a>
                 </div>
             </div>
             

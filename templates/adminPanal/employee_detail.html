@@ -1,0 +1,312 @@
+{% extends 'layout.html' %}
+{% block title %}{{ employee.First_name }} {{ employee.Last_name }} | Employee Details{% endblock %}
+{% block body %}
+{% load static %}
+
+<style>
+    .admin-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    
+    .admin-header {
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .admin-header h1 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .admin-header p {
+        color: #7f8c8d;
+        font-size: 16px;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        margin-left: 10px;
+    }
+    
+    .btn-primary {
+        background-color: #3498db;
+        color: white;
+    }
+    
+    .btn-danger {
+        background-color: #e74c3c;
+        color: white;
+    }
+    
+    .btn-secondary {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+    
+    .employee-profile {
+        display: flex;
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .profile-sidebar {
+        flex: 0 0 250px;
+        background-color: #3498db;
+        color: white;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        font-size: 48px;
+        color: #3498db;
+    }
+    
+    .profile-name {
+        font-size: 20px;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+    
+    .profile-job {
+        font-size: 16px;
+        opacity: 0.9;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .status-indicator {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        background-color: rgba(255, 255, 255, 0.2);
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 20px;
+    }
+    
+    .profile-content {
+        flex: 1;
+        padding: 30px;
+    }
+    
+    .profile-section {
+        margin-bottom: 30px;
+    }
+    
+    .profile-section h3 {
+        font-size: 18px;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .info-item {
+        margin-bottom: 15px;
+    }
+    
+    .info-label {
+        font-size: 13px;
+        color: #7f8c8d;
+        margin-bottom: 5px;
+    }
+    
+    .info-value {
+        font-size: 15px;
+        color: #2c3e50;
+    }
+    
+    .about-content {
+        color: #555;
+        line-height: 1.6;
+    }
+    
+    .cv-container {
+        margin-top: 15px;
+    }
+    
+    .cv-link {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        color: #333;
+        text-decoration: none;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .cv-link i {
+        margin-right: 8px;
+    }
+    
+    .cv-link:hover {
+        background-color: #e9ecef;
+    }
+</style>
+
+<div class="admin-container">
+    {% if user.is_superuser %}
+        <div class="admin-header">
+            <div>
+                <h1>Employee Profile</h1>
+                <p>View detailed information about the selected employee.</p>
+            </div>
+            <div>
+                <a href="{% url 'employees_list' %}" class="btn btn-secondary">Back to List</a>
+                <a href="{% url 'editEmployee' employee.id %}" class="btn btn-primary">Edit Profile</a>
+                <a href="{% url 'terminateEmployee' employee.id %}" class="btn btn-danger">Terminate</a>
+            </div>
+        </div>
+        
+        <div class="employee-profile">
+            <div class="profile-sidebar">
+                <div class="profile-avatar">
+                    {{ employee.First_name|slice:":1" }}{{ employee.Last_name|slice:":1" }}
+                </div>
+                <h2 class="profile-name">{{ employee.First_name }} {{ employee.Last_name }}</h2>
+                <div class="profile-job">{{ employee.job }}</div>
+                <div class="status-indicator">
+                    {% if employee.active %}
+                    Active Employee
+                    {% else %}
+                    Terminated
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="profile-content">
+                <div class="profile-section">
+                    <h3>Personal Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Full Name</div>
+                            <div class="info-value">{{ employee.First_name }} {{ employee.Last_name }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Username</div>
+                            <div class="info-value">{{ employee.user_name }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Password</div>
+                            <div class="info-value">{{ employee.password }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Email Address</div>
+                            <div class="info-value">{{ employee.email }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Phone Number</div>
+                            <div class="info-value">{{ employee.number }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <h3>Employment Details</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Job Title</div>
+                            <div class="info-value">{{ employee.job }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Salary</div>
+                            <div class="info-value">{{ employee.salary }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Start Date</div>
+                            <div class="info-value">{{ employee.Sday }}/{{ employee.Smonth }}/{{ employee.Syear }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Status</div>
+                            <div class="info-value">
+                                {% if employee.active %}
+                                <span style="color: #2ecc71;">Active</span>
+                                {% else %}
+                                <span style="color: #e74c3c;">Terminated on {{ employee.Eday }}/{{ employee.Emonth }}/{{ employee.Eyear }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if employee.portfolio %}
+                <div class="profile-section">
+                    <h3>Portfolio</h3>
+                    <div class="info-item">
+                        <div class="info-value">
+                            <a href="{{ employee.prto }}" target="_blank">{{ employee.prto }}</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if employee.cv %}
+                <div class="profile-section">
+                    <h3>Resume/CV</h3>
+                    <div class="cv-container">
+                        <a href="{{ employee.cv.url }}" class="cv-link" target="_blank">
+                            <i class="fas fa-file-pdf"></i> Download CV
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="profile-section">
+                    <h3>About</h3>
+                    <div class="about-content">
+                        {{ employee.about|linebreaks }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    {% else %}
+        <div class="error-container">
+            <div class="error-icon">⚠️</div>
+            <h1 class="error-title">Access Denied</h1>
+            <p class="error-message">
+                You don't have permission to access this page. 
+                This area is restricted to authorized administrators only.
+            </p>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
