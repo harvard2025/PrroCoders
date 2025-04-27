@@ -1,0 +1,555 @@
+<!-- templates/blog/post_detail.html -->
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }} | PrroCoders Blog{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css">
+<style>
+    .post-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .post-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 40px;
+    }
+    
+    .post-header {
+        margin-bottom: 30px;
+    }
+    
+    .post-title {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #1f2937;
+    }
+    
+    .post-meta {
+        display: flex;
+        gap: 20px;
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    
+    .post-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .post-featured-image {
+        width: 100%;
+        height: auto;
+        max-height: 500px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+    
+    .post-content {
+        color: #4b5563;
+        line-height: 1.8;
+        font-size: 18px;
+        margin-bottom: 40px;
+    }
+    
+    .post-content h2 {
+        font-size: 28px;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        color: #1f2937;
+    }
+    
+    .post-content h3 {
+        font-size: 24px;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        color: #1f2937;
+    }
+    
+    .post-content p {
+        margin-bottom: 20px;
+    }
+    
+    .post-content ul, .post-content ol {
+        margin-bottom: 20px;
+        padding-left: 25px;
+    }
+    
+    .post-content li {
+        margin-bottom: 10px;
+    }
+    
+    .post-content blockquote {
+        border-left: 4px solid #4a6bff;
+        padding-left: 20px;
+        margin-left: 0;
+        margin-bottom: 20px;
+        font-style: italic;
+        color: #6b7280;
+    }
+    
+    .post-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+    
+    .post-content pre {
+        background: #f9fafb;
+        border-radius: 8px;
+        padding: 15px;
+        overflow-x: auto;
+        margin-bottom: 20px;
+    }
+    
+    .post-content code {
+        font-family: 'Courier New', Courier, monospace;
+        color: #4a6bff;
+    }
+    
+    .post-content a {
+        color: #4a6bff;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.3s;
+    }
+    
+    .post-content a:hover {
+        border-color: #4a6bff;
+    }
+    
+    .post-categories {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 40px;
+    }
+    
+    .post-category {
+        background: #f3f4f6;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        color: #4b5563;
+        text-decoration: none;
+        transition: background 0.3s, color 0.3s;
+    }
+    
+    .post-category:hover {
+        background: #4a6bff;
+        color: white;
+    }
+    
+    .comments-section {
+        margin-top: 50px;
+        border-top: 1px solid #e5e7eb;
+        padding-top: 30px;
+    }
+    
+    .comments-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #1f2937;
+    }
+    
+    .comment {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .comment-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    
+    .comment-author {
+        font-weight: 600;
+        color: #4b5563;
+    }
+    
+    .comment-date {
+        font-size: 14px;
+        color: #9ca3af;
+    }
+    
+    .comment-content {
+        color: #4b5563;
+        line-height: 1.6;
+    }
+    
+    .comment-form {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .comment-form-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #1f2937;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #4b5563;
+        font-weight: 500;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+        border-color: #4a6bff;
+        outline: none;
+    }
+    
+    .btn-primary {
+        background: #4a6bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .btn-primary:hover {
+        background: #3a5cff;
+    }
+    
+    .blog-sidebar {
+        position: sticky;
+        top: 30px;
+        align-self: start;
+    }
+    
+    .sidebar-widget {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .sidebar-widget h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e5e7eb;
+        color: #1f2937;
+    }
+    
+    .search-form {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .search-input {
+        flex-grow: 1;
+        padding: 10px 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    
+    .search-button {
+        background: #4a6bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 0 15px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .search-button:hover {
+        background: #3a5cff;
+    }
+    
+    .category-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .category-list li {
+        padding: 8px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .category-list li:last-child {
+        border-bottom: none;
+    }
+    
+    .category-list a {
+        color: #4b5563;
+        text-decoration: none;
+        transition: color 0.3s;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .category-list a:hover {
+        color: #4a6bff;
+    }
+    
+    .category-count {
+        background: #f3f4f6;
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 12px;
+        color: #6b7280;
+    }
+    
+    .admin-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    .btn-secondary {
+        background: #6b7280;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .btn-secondary:hover {
+        background: #4b5563;
+    }
+    
+    .btn-danger {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .btn-danger:hover {
+        background: #dc2626;
+    }
+    
+    @media (max-width: 1024px) {
+        .post-layout {
+            grid-template-columns: 1fr;
+        }
+        
+        .blog-sidebar {
+            order: -1;
+            position: static;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .post-title {
+            font-size: 28px;
+        }
+        
+        .post-content {
+            font-size: 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="post-container">
+    <div class="post-layout">
+        <main>
+            <article class="post">
+                <header class="post-header">
+                    <h1 class="post-title">{{ post.title }}</h1>
+                    <div class="post-meta">
+                        <span><i class="far fa-calendar-alt"></i> {{ post.publish_date|date:"M d, Y" }}</span>
+                        <span><i class="far fa-user"></i> {{ post.author.username }}</span>
+                        <span><i class="far fa-comments"></i> {{ comments.count }} Comments</span>
+                    </div>
+                    
+                    {% if post.categories.all %}
+                        <div class="post-categories">
+                            {% for category in post.categories.all %}
+                                <a href="{% url 'blog:category' slug=category.slug %}" class="post-category">
+                                    {{ category.name }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </header>
+                
+                {% if post.featured_image %}
+                    <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="post-featured-image">
+                {% endif %}
+                
+                <div class="post-content">
+                    {{ post.content_html|safe }}
+                </div>
+                
+                {% if user.is_staff and user == post.author or user.is_superuser %}
+                    <div class="admin-actions">
+                        <a href="{% url 'blog:post_update' pk=post.pk %}" class="btn-secondary">
+                            <i class="fas fa-edit"></i> Edit Post
+                        </a>
+                        <a href="{% url 'blog:post_delete' pk=post.pk %}" class="btn-danger">
+                            <i class="fas fa-trash"></i> Delete Post
+                        </a>
+                    </div>
+                {% endif %}
+                
+                <section class="comments-section">
+                    <h2 class="comments-title">Comments ({{ comments.count }})</h2>
+                    
+                    {% if comments %}
+                        {% for comment in comments %}
+                            <div class="comment">
+                                <div class="comment-meta">
+                                    <span class="comment-author">{{ comment.name }}</span>
+                                    <span class="comment-date">{{ comment.created_date|date:"M d, Y" }}</span>
+                                </div>
+                                <div class="comment-content">
+                                    {{ comment.content }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No comments yet. Be the first to comment!</p>
+                    {% endif %}
+                    
+                    {% if user.is_staff %}
+                        <h3>Unapproved Comments</h3>
+                        {% for comment in post.comments.all %}
+                            {% if not comment.approved %}
+                                <div class="comment">
+                                    <div class="comment-meta">
+                                        <span class="comment-author">{{ comment.name }} (unapproved)</span>
+                                        <span class="comment-date">{{ comment.created_date|date:"M d, Y" }}</span>
+                                    </div>
+                                    <div class="comment-content">
+                                        {{ comment.content }}
+                                    </div>
+                                    <div class="admin-actions">
+                                        <a href="{% url 'blog:approve_comment' comment_id=comment.id %}" class="btn-secondary">
+                                            <i class="fas fa-check"></i> Approve
+                                        </a>
+                                        <a href="{% url 'blog:delete_comment' comment_id=comment.id %}" class="btn-danger">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="comment-form">
+                        <h3 class="comment-form-title">Leave a Comment</h3>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="{{ comment_form.name.id_for_label }}">Name:</label>
+                                {{ comment_form.name }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ comment_form.email.id_for_label }}">Email:</label>
+                                {{ comment_form.email }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ comment_form.content.id_for_label }}">Comment:</label>
+                                {{ comment_form.content }}
+                            </div>
+                            <button type="submit" class="btn-primary">Submit Comment</button>
+                        </form>
+                    </div>
+                </section>
+            </article>
+        </main>
+        
+        <aside class="blog-sidebar">
+            <div class="sidebar-widget">
+                <h3>Search</h3>
+                <form action="{% url 'blog:search_results' %}" method="get" class="search-form">
+                    <input type="text" name="q" placeholder="Search articles..." class="search-input" required>
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+            
+            <div class="sidebar-widget">
+                <h3>Categories</h3>
+                <ul class="category-list">
+                    {% for category in categories %}
+                        <li>
+                            <a href="{% url 'blog:category' slug=category.slug %}">
+                                {{ category.name }}
+                                <span class="category-count">{{ category.posts.count }}</span>
+                            </a>
+                        </li>
+                    {% empty %}
+                        <li>No categories available</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            {% if user.is_staff %}
+                <div class="sidebar-widget">
+                    <h3>Admin Tools</h3>
+                    <ul class="category-list">
+                        <li><a href="{% url 'blog:post_create' %}">Create New Post</a></li>
+                        <li><a href="{% url 'blog:manage_posts' %}">Manage Your Posts</a></li>
+                    </ul>
+                </div>
+            {% endif %}
+        </aside>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/plugins/autoloader/prism-autoloader.min.js"></script>
+{% endblock %}
