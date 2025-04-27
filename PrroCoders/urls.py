@@ -27,6 +27,8 @@ urlpatterns = [
     path('adminPanal/', include('adminPanal.urls')),
     path('Cources/', include('CourcePanal.urls')),
     path('Web/',include('WebMaker.urls')),
+    path('blog/',include('blog.urls')),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
