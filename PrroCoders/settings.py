@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'CourcePanal',
     'WebMaker',
     'blog',
+    'store',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

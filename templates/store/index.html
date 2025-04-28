@@ -1,0 +1,276 @@
+{% extends 'layout.html' %}
+{% block title %}Store{% endblock %}
+{% block body %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'Cource/style.css' %}">
+<style>
+
+</style>
+
+
+{% if user.is_staff %}
+
+{% endif %}
+
+
+
+<style>
+
+    .a{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin-top: 110px;
+    }
+    .add{
+        position: fixed;
+        z-index: 999;
+        top: 69px;
+        right: 0;
+        left: 0;
+        width: 100%;
+        height: 120px;
+        background: linear-gradient(rgb(255, 255, 255),rgb(239, 239, 239));
+        background-color: red;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 3px 0 7px rgba(0, 0, 0, 0.461);
+        
+
+    }
+    .form{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        height: 100%;
+        width: 100%;
+        position: relative;
+    }
+    .job{
+        border: 1px solid rgba(0, 0, 0, 0.393);
+        border-radius: 32px 16px;
+        width: 360px;
+        height: 30px;
+        padding: 1px 0 1px 10px;
+        transition: 0.3s;
+        
+    }
+    .job:hover{
+        border: 3px solid rgb(0, 72, 255);
+    }
+
+    .btn{
+        border: 1px solid black;
+        border-radius: 32px;
+        background: linear-gradient(rgb(74, 74, 74),rgb(0, 0, 0));
+        color: aliceblue;
+        padding: 6px 10px;
+        box-shadow: 4px 2px 5px rgba(0, 0, 0, 0.288);
+        transition: 0.3s;
+    }
+    .btn:hover{
+        transform: translateY(-1px);
+        scale: 1.06;
+    }
+
+    .cat{
+        border: 1px solid rgba(0, 0, 0, 0.393);
+        border-radius: 32px 16px;
+        opacity: 0.8;
+        height: 30px;
+        width: 150px;
+        text-align: center;
+        transition: 0.3s;
+    }
+    .cat:hover{
+        border: 3px solid rgb(0, 72, 255);
+    }
+
+    .price{
+        width: 100%;
+        display: flex;
+        justify-content:space-between;
+    }
+    .btnp{
+        padding: 5px 30px;
+        border: 1px solid rgba(0, 0, 0, 0.196);
+        margin: 0 5px;
+        text-decoration: none;
+        border-radius: 32px;
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.256);
+        color: rgb(0, 67, 145);
+        transition: 0.3s;
+    }
+    .btnp:hover{
+        scale: 1.1;
+        border-color: rgb(2, 62, 153);
+    }
+    .free{
+        color: green;
+    }
+    .free:hover{
+        border-color: green;
+    }
+    .paid{
+        color: rgb(107, 0, 0);
+    }
+    .paid:hover{
+        border-color: rgb(107, 0, 0);
+    }
+
+
+
+
+    .q{
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+
+    @keyframes fadeIn {
+        from {
+        opacity: 0;
+        transform: translateY(-30px);
+        }
+        to {
+        opacity: 1;
+        transform: translateY(0);
+        }
+    }
+</style>
+
+
+<div class="add">
+    <div class="q">
+        <form class="form" method="post" action="{% url 'store:store' 1 %}">
+            {% csrf_token %}
+            <select name="cat" class="cat">
+                <option value="all">Choose Category</option>
+                {% for cat in cats %}
+                    <option value="{{cat}}">{{cat}}</option>
+                {% endfor %}
+                
+
+            </select>
+    
+            <input type="text" name="name" class="job" placeholder="Filter By name...">
+            <input type="submit" value="Search" class="btn">
+        </form>
+        <div class="price">
+            <a href="{% url 'store:store' 2 %}" class="free btnp">FREE</a>
+            <a href="{% url 'store:store' 1 %}" class="all btnp">All</a>
+            <a href="{% url 'store:store' 3 %}" class="paid btnp">PAID</a>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="a">
+
+
+
+    <div class="Cources">
+        {% for Product in Products %}
+            {% if Product.isActive == True %}
+            
+                <a href="{% if user.is_authenticated %}{% else %}{% url 'Login' %}{% endif %}" class="a-Cource">
+                    <div class="Cource">
+                        <div class="img-container">
+                            {% if Product.image %}
+                                <img src="{{ Product.image.url }}" alt="Product Image" class="img">
+                            {% else %}
+                                <img src="/media/default.png" alt="Default Image" class="img">
+                            {% endif %}
+                            <div class="img-overlay"></div>
+                            <div class="badge">Active</div>
+                        </div>
+                        
+                        <div class="course-content">
+                            <h1 class="name">{{Product.name}}</h1>
+                            <p class="des">{{Product.description}}</p>
+                        </div>
+                        
+                        <div class="course-footer">
+                            <div class="price-tag">
+                                {% if Product.price == 0 %}
+                                    <h4 class="free"><strong>Free</strong></h4>
+                                {% else %}
+                                    <h4 class="price"><strong>{{Product.price}}$</strong></h4>
+                                {% endif %}
+                            </div>
+                            <button class="learn-more">Learn More</button>
+                        </div>
+                    </div>
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

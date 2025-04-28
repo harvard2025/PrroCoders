@@ -27,6 +27,7 @@ urlpatterns = [
     path('adminPanal/', include('adminPanal.urls')),
     path('Cources/', include('CourcePanal.urls')),
     path('Web/',include('WebMaker.urls')),
+    path('products/',include('store.urls')),
     path('blog/',include('blog.urls'), name='blog'),
 
 ]
