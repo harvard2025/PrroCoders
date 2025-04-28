@@ -1,0 +1,467 @@
+```html
+<!-- templates/blog/search_results.html -->
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Search Results | PrroCoders Blog{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+    .search-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .search-header {
+        background: linear-gradient(135deg, #4a6bff 0%, #6d28d9 100%);
+        padding: 40px 0;
+        text-align: center;
+        color: white;
+        margin-bottom: 40px;
+        border-radius: 8px;
+    }
+    
+    .search-header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    
+    .search-header p {
+        font-size: 18px;
+        max-width: 700px;
+        margin: 0 auto;
+        opacity: 0.9;
+    }
+    
+    .search-highlight {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+    
+    .search-form {
+        max-width: 700px;
+        margin: 0 auto 40px auto;
+        display: flex;
+        gap: 10px;
+    }
+    
+    .search-input {
+        flex-grow: 1;
+        padding: 15px 20px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 16px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: #4a6bff;
+    }
+    
+    .search-button {
+        background: #4a6bff;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0 25px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .search-button:hover {
+        background: #3a5cff;
+    }
+    
+    .search-results {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+        gap: 30px;
+        margin-bottom: 50px;
+    }
+    
+    .post-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .post-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .post-image {
+        height: 200px;
+        background-color: #f3f4f6;
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .post-image-placeholder {
+        height: 200px;
+        background: linear-gradient(45deg, #f3f4f6 25%, #e5e7eb 25%, #e5e7eb 50%, #f3f4f6 50%, #f3f4f6 75%, #e5e7eb 75%, #e5e7eb 100%);
+        background-size: 20px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .post-image-placeholder i {
+        font-size: 48px;
+        color: #9ca3af;
+    }
+    
+    .post-content {
+        padding: 25px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .post-categories {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .post-category {
+        background: #f3f4f6;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: #4b5563;
+        text-decoration: none;
+        transition: background 0.3s, color 0.3s;
+    }
+    
+    .post-category:hover {
+        background: #4a6bff;
+        color: white;
+    }
+    
+    .post-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #1f2937;
+        text-decoration: none;
+        transition: color 0.3s;
+        line-height: 1.4;
+    }
+    
+    .post-title:hover {
+        color: #4a6bff;
+    }
+    
+    .post-excerpt {
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+    
+    .post-meta {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        color: #9ca3af;
+        font-size: 14px;
+    }
+    
+    .post-date {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .post-comments {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: 50px 20px;
+        background: #f9fafb;
+        border-radius: 8px;
+        margin-bottom: 50px;
+    }
+    
+    .no-results h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 15px;
+    }
+    
+    .no-results p {
+        color: #6b7280;
+        max-width: 600px;
+        margin: 0 auto 20px auto;
+    }
+    
+    .search-suggestions {
+        margin-top: 30px;
+        background: #f9fafb;
+        border-radius: 8px;
+        padding: 25px;
+    }
+    
+    .search-suggestions h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 15px;
+    }
+    
+    .search-suggestions ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .search-suggestions li {
+        margin-bottom: 10px;
+        padding-left: 20px;
+        position: relative;
+        color: #6b7280;
+    }
+    
+    .search-suggestions li:before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: #4a6bff;
+    }
+    
+    .blog-sidebar {
+        margin-top: 50px;
+    }
+    
+    .sidebar-widget {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .sidebar-widget h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e5e7eb;
+        color: #1f2937;
+    }
+    
+    .category-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .category-list li {
+        padding: 8px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .category-list li:last-child {
+        border-bottom: none;
+    }
+    
+    .category-list a {
+        color: #4b5563;
+        text-decoration: none;
+        transition: color 0.3s;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .category-list a:hover {
+        color: #4a6bff;
+    }
+    
+    .category-count {
+        background: #f3f4f6;
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 12px;
+        color: #6b7280;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+        gap: 5px;
+    }
+    
+    .pagination a, .pagination span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: white;
+        color: #4b5563;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .pagination a:hover {
+        background: #f3f4f6;
+    }
+    
+    .pagination .current {
+        background: #4a6bff;
+        color: white;
+    }
+    
+    @media (max-width: 768px) {
+        .search-header {
+            padding: 30px 20px;
+        }
+        
+        .search-header h1 {
+            font-size: 24px;
+        }
+        
+        .search-form {
+            padding: 0 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="search-container">
+    <div class="search-header">
+        <h1>Search Results</h1>
+        <p>Showing results for <span class="search-highlight">{{ query }}</span></p>
+    </div>
+    
+    <form action="{% url 'blog:search_results' %}" method="get" class="search-form">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search for articles..." class="search-input" required>
+        <button type="submit" class="search-button">Search</button>
+    </form>
+    
+    {% if posts %}
+        <div class="search-results">
+            {% for post in posts %}
+                <div class="post-card">
+                    {% if post.featured_image %}
+                        <div class="post-image" style="background-image: url('{{ post.featured_image.url }}');"></div>
+                    {% else %}
+                        <div class="post-image-placeholder">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="post-content">
+                        {% if post.categories.all %}
+                            <div class="post-categories">
+                                {% for category in post.categories.all %}
+                                    <a href="{% url 'blog:category' slug=category.slug %}" class="post-category">
+                                        {{ category.name }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <a href="{% url 'blog:post_detail' year=post.publish_date.year month=post.publish_date.month day=post.publish_date.day slug=post.slug %}" class="post-title">
+                            {{ post.title }}
+                        </a>
+                        
+                        <div class="post-excerpt">
+                            {{ post.summary }}
+                        </div>
+                        
+                        <div class="post-meta">
+                            <div class="post-date">
+                                <i class="far fa-calendar-alt"></i> {{ post.publish_date|date:"M d, Y" }}
+                            </div>
+                            <div class="post-comments">
+                                <i class="far fa-comments"></i> {{ post.comments.count }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if posts.has_other_pages %}
+            <div class="pagination">
+                {% if posts.has_previous %}
+                    <a href="?q={{ query }}&page=1"><i class="fas fa-angle-double-left"></i></a>
+                    <a href="?q={{ query }}&page={{ posts.previous_page_number }}"><i class="fas fa-angle-left"></i></a>
+                {% endif %}
+                
+                {% for num in posts.paginator.page_range %}
+                    {% if posts.number == num %}
+                        <span class="current">{{ num }}</span>
+                    {% elif num > posts.number|add:'-3' and num < posts.number|add:'3' %}
+                        <a href="?q={{ query }}&page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if posts.has_next %}
+                    <a href="?q={{ query }}&page={{ posts.next_page_number }}"><i class="fas fa-angle-right"></i></a>
+                    <a href="?q={{ query }}&page={{ posts.paginator.num_pages }}"><i class="fas fa-angle-double-right"></i></a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="no-results">
+            <h2>No results found</h2>
+            <p>We couldn't find any posts matching "{{ query }}". Please try a different search term.</p>
+            
+            <div class="search-suggestions">
+                <h3>Search Tips</h3>
+                <ul>
+                    <li>Check your spelling</li>
+                    <li>Try using more general keywords</li>
+                    <li>Try searching for related terms</li>
+                    <li>Browse posts by category using the sidebar</li>
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+    
+    <aside class="blog-sidebar">
+        <div class="sidebar-widget">
+            <h3>Categories</h3>
+            <ul class="category-list">
+                {% for category in categories %}
+                    <li>
+                        <a href="{% url 'blog:category' slug=category.slug %}">
+                            {{ category.name }}
+                            <span class="category-count">{{ category.posts.count }}</span>
+                        </a>
+                    </li>
+                {% empty %}
+                    <li>No categories available</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </aside>
+</div>
+{% endblock %}
+```

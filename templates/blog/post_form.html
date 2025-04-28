@@ -1,0 +1,490 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}{{ title }} | PrroCoders Blog{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+    .form-header {
+        background: linear-gradient(135deg, #4a6bff 0%, #6d28d9 100%);
+        padding: 40px 0;
+        text-align: center;
+        color: white;
+        margin-bottom: 40px;
+        border-radius: 8px;
+    }
+    
+    .form-header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    
+    .form-header p {
+        font-size: 16px;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 20px 60px;
+    }
+    
+    .form-card {
+        background: white;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #374151;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #4a6bff;
+        box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2);
+    }
+    
+    .form-control-file {
+        padding: 8px 0;
+    }
+    
+    .form-help {
+        margin-top: 5px;
+        font-size: 14px;
+        color: #6b7280;
+    }
+    
+    .btn-container {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+    
+    .btn {
+        padding: 12px 20px;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s;
+        text-align: center;
+    }
+    
+    .btn-primary {
+        background: #4a6bff;
+        color: white;
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: #3a5cff;
+    }
+    
+    .btn-secondary {
+        background: white;
+        color: #4b5563;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .btn-secondary:hover {
+        background: #f9fafb;
+    }
+    
+    .errorlist {
+        color: #ef4444;
+        margin: 5px 0 0;
+        padding-left: 20px;
+        font-size: 14px;
+    }
+    
+    /* Editor Toolbar Styles */
+    .editor-toolbar {
+        display: flex;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-bottom: none;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        padding: 5px;
+    }
+    
+    .editor-toolbar button {
+        background: none;
+        border: none;
+        color: #6b7280;
+        width: 36px;
+        height: 36px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 16px;
+    }
+    
+    .editor-toolbar button:hover {
+        background: #e5e7eb;
+        color: #4b5563;
+    }
+    
+    .editor-toolbar .separator {
+        width: 1px;
+        background: #e5e7eb;
+        margin: 0 5px;
+    }
+    
+    .editor-content {
+        border: 1px solid #e5e7eb;
+        border-top: none;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+    
+    .editor-content textarea {
+        width: 100%;
+        min-height: 300px;
+        padding: 15px;
+        border: none;
+        resize: vertical;
+        font-family: inherit;
+        font-size: 16px;
+    }
+    
+    .editor-content textarea:focus {
+        outline: none;
+    }
+    
+    /* Custom editor button groups */
+    .editor-toolbar-group {
+        display: flex;
+        margin-right: 10px;
+    }
+    
+    /* Markdown tips */
+    .markdown-tips {
+        background: #f9fafb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 30px;
+    }
+    
+    .markdown-tips h4 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #374151;
+    }
+    
+    .markdown-tips ul {
+        margin: 0;
+        padding-left: 20px;
+        color: #6b7280;
+    }
+    
+    .markdown-tips li {
+        margin-bottom: 5px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .form-header {
+            padding: 30px 0;
+        }
+        
+        .form-card {
+            padding: 20px;
+        }
+        
+        .editor-toolbar {
+            flex-wrap: wrap;
+        }
+        
+        .editor-toolbar-group {
+            margin-bottom: 5px;
+        }
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .form-card {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="form-header">
+    <h1>{{ title }}</h1>
+    <p>{% if form.instance.id %}Edit your existing blog post{% else %}Share your knowledge with the world by creating a new blog post{% endif %}</p>
+</div>
+
+<div class="form-container">
+    <div class="form-card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}" class="form-label">Post Title:</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.title.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="custom_content" class="form-label">Content:</label>
+                
+                <div class="editor-toolbar">
+                    <div class="editor-toolbar-group">
+                        <button type="button" title="Bold" data-action="bold"><i class="fas fa-bold"></i></button>
+                        <button type="button" title="Italic" data-action="italic"><i class="fas fa-italic"></i></button>
+                        <button type="button" title="Heading" data-action="heading"><i class="fas fa-heading"></i></button>
+                    </div>
+                    
+                    <div class="editor-toolbar-group">
+                        <button type="button" title="Quote" data-action="quote"><i class="fas fa-quote-right"></i></button>
+                        <button type="button" title="Unordered list" data-action="unordered-list"><i class="fas fa-list-ul"></i></button>
+                        <button type="button" title="Ordered list" data-action="ordered-list"><i class="fas fa-list-ol"></i></button>
+                    </div>
+                    
+                    <div class="editor-toolbar-group">
+                        <button type="button" title="Link" data-action="link"><i class="fas fa-link"></i></button>
+                        <button type="button" title="Image" data-action="image"><i class="fas fa-image"></i></button>
+                        <button type="button" title="Code" data-action="code"><i class="fas fa-code"></i></button>
+                        <button type="button" title="Table" data-action="table"><i class="fas fa-table"></i></button>
+                    </div>
+                    
+                    <div class="editor-toolbar-group">
+                        <button type="button" title="Preview" data-action="preview"><i class="fas fa-eye"></i></button>
+                        <button type="button" title="Side by side" data-action="side-by-side"><i class="fas fa-columns"></i></button>
+                        <button type="button" title="Fullscreen" data-action="fullscreen"><i class="fas fa-expand"></i></button>
+                    </div>
+                    
+                    <div class="editor-toolbar-group">
+                        <button type="button" title="Help" data-action="help"><i class="fas fa-question"></i></button>
+                    </div>
+                </div>
+                
+                <div class="editor-content">
+                    {{ form.content }}
+                </div>
+                
+                {% if form.content.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.content.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.featured_image.id_for_label }}" class="form-label">Featured Image:</label>
+                {{ form.featured_image }}
+                {% if form.featured_image.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.featured_image.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="form-help">Recommended size: 1200×800 pixels</div>
+                {% if form.instance.featured_image %}
+                    <div class="mt-3">
+                        <p>Current image: <a href="{{ form.instance.featured_image.url }}" target="_blank">View</a></p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.categories.id_for_label }}" class="form-label">Categories:</label>
+                {{ form.categories }}
+                {% if form.categories.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.categories.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="form-help">Hold Ctrl/Cmd to select multiple categories</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.status.id_for_label }}" class="form-label">Status:</label>
+                {{ form.status }}
+                {% if form.status.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.status.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="form-help">Draft posts are only visible to admins</div>
+            </div>
+            
+            <div class="btn-container">
+                <a href="{% url 'blog:manage_posts' %}" class="btn btn-secondary">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    {% if form.instance.id %}Update Post{% else %}Create Post{% endif %}
+                </button>
+            </div>
+        </form>
+        
+        <div class="markdown-tips">
+            <h4>Markdown Tips</h4>
+            <ul>
+                <li><strong># Heading 1</strong>, <strong>## Heading 2</strong>, <strong>### Heading 3</strong></li>
+                <li><strong>**Bold text**</strong> or <strong>__Bold text__</strong></li>
+                <li><strong>*Italic text*</strong> or <strong>_Italic text_</strong></li>
+                <li><strong>- Bullet points</strong></li>
+                <li><strong>1. Numbered lists</strong></li>
+                <li><strong>[Link text](https://example.com)</strong></li>
+                <li><strong>![Image alt text](image-url.jpg)</strong></li>
+                <li><strong>```python print("Code blocks") ```</strong></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const textarea = document.getElementById("{{ form.content.id_for_label }}");
+        const buttons = document.querySelectorAll('.editor-toolbar button');
+        
+        function insertText(textarea, before, after, defaultText) {
+            // Get cursor position
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            const text = selectedText || defaultText;
+            
+            // Insert text
+            const beforeText = textarea.value.substring(0, start);
+            const afterText = textarea.value.substring(end, textarea.value.length);
+            textarea.value = beforeText + before + text + after + afterText;
+            
+            // Set cursor position
+            const newCursorPos = selectedText ? 
+                start + before.length + text.length + after.length :
+                start + before.length;
+            
+            textarea.focus();
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+        }
+        
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                const action = this.getAttribute('data-action');
+                
+                switch(action) {
+                    case 'bold':
+                        insertText(textarea, '**', '**', '');
+                        break;
+                    case 'italic':
+                        insertText(textarea, '*', '*', '');
+                        break;
+                    case 'heading':
+                        insertText(textarea, '## ', '', '');
+                        break;
+                    case 'quote':
+                        insertText(textarea, '> ', '', '');
+                        break;
+                    case 'unordered-list':
+                        insertText(textarea, '- ', '', '');
+                        break;
+                    case 'ordered-list':
+                        insertText(textarea, '1. ', '', '');
+                        break;
+                    case 'link':
+                        insertText(textarea, '[', '](https://example.com)', 'Link text');
+                        break;
+                    case 'image':
+                        insertText(textarea, '![', '](https://example.com/image.jpg)', 'Image description');
+                        break;
+                    case 'code':
+                        insertText(textarea, '```\n', '\n```', '');
+                        break;
+                    case 'table':
+                        insertText(textarea, '| Header 1 | Header 2 |\n| --- | --- |\n| Cell 1 | Cell 2 |\n', '', '');
+                        break;
+                    case 'preview':
+                        // Implement preview functionality if needed
+                        console.log('Preview clicked');
+                        break;
+                    case 'side-by-side':
+                        // Implement side-by-side functionality if needed
+                        console.log('Side by side clicked');
+                        break;
+                    case 'fullscreen':
+                        // Implement fullscreen functionality if needed
+                        console.log('Fullscreen clicked');
+                        break;
+                    case 'help':
+                        // Scroll to markdown tips
+                        document.querySelector('.markdown-tips').scrollIntoView({ behavior: 'smooth' });
+                        break;
+                }
+            });
+        });
+        
+        // Enhance select elements with better styling
+        const enhanceSelect = (selectElement) => {
+            if (!selectElement) return;
+            selectElement.classList.add('form-control');
+        };
+        
+        enhanceSelect(document.getElementById("{{ form.categories.id_for_label }}"));
+        enhanceSelect(document.getElementById("{{ form.status.id_for_label }}"));
+    });
+</script>
+{% endblock %}
