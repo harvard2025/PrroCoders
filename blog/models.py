@@ -20,8 +20,8 @@ class Category(models.Model):
 # In models.py - Post model
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
-        self.content_html = markdown(self.content)
+            self.slug = slugify(self.name)
+        self.content_html = markdown(self.description)
         super().save(*args, **kwargs)
     
     def get_absolute_url(self):

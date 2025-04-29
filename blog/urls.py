@@ -7,6 +7,7 @@ app_name = 'blog'
 
 urlpatterns = [
     # Public-facing URLs
+     path('category/create/', views.category_create, name='category_create'),
     path('', views.PostListView.as_view(), name='post_list'),
     path('post/<int:year>/<int:month>/<int:day>/<slug:slug>/', 
          views.PostDetailView.as_view(), name='post_detail'),
@@ -25,7 +26,7 @@ urlpatterns = [
     
     # Category management URLs
     path('manage/categories/', views.manage_categories, name='manage_categories'),
-    path('category/create/', views.category_create, name='category_create'),
+
     path('category/<int:category_id>/edit/', views.category_edit, name='category_edit'),
     path('category/<int:category_id>/update/', views.category_update, name='category_update'),
     path('category/<int:category_id>/delete/', views.category_delete, name='category_delete'),
