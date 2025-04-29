@@ -30,12 +30,15 @@ class PostForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'form-control'}),
         }
     
+# Update the save method in PostForm in blog/forms.py
     def save(self, commit=True):
         instance = super().save(commit=False)
-        instance.slug = slugify(instance.title)
+        if not instance.slug:  # Only set slug if it doesn't exist
+            instance.slug = slugify(instance.title)
+        
         if commit:
             instance.save()
-            self.save_m2m()
+            self.save_m2m()  # This saves the categories
         return instance
 
 class CommentForm(forms.ModelForm):

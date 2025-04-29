@@ -163,6 +163,7 @@
         border-top: none;
         border-bottom-left-radius: 4px;
         border-bottom-right-radius: 4px;
+        position: relative;
     }
     
     .editor-content textarea {
@@ -211,6 +212,136 @@
         margin-bottom: 5px;
     }
     
+    /* Preview Styles */
+    .content-preview {
+        display: none;
+        padding: 15px;
+        min-height: 300px;
+        overflow-y: auto;
+        background: white;
+        border: none;
+    }
+    
+    .content-preview h1, .content-preview h2, .content-preview h3 {
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+        font-weight: 600;
+    }
+    
+    .content-preview h1 {
+        font-size: 1.875rem;
+    }
+    
+    .content-preview h2 {
+        font-size: 1.5rem;
+    }
+    
+    .content-preview h3 {
+        font-size: 1.25rem;
+    }
+    
+    .content-preview p {
+        margin-bottom: 1em;
+    }
+    
+    .content-preview ul, .content-preview ol {
+        margin-bottom: 1em;
+        padding-left: 2em;
+    }
+    
+    .content-preview code {
+        background: #f3f4f6;
+        padding: 0.2em 0.4em;
+        border-radius: 3px;
+        font-family: monospace;
+    }
+    
+    .content-preview pre {
+        background: #f3f4f6;
+        padding: 1em;
+        border-radius: 3px;
+        overflow-x: auto;
+        margin-bottom: 1em;
+    }
+    
+    .content-preview blockquote {
+        border-left: 4px solid #e5e7eb;
+        padding-left: 1em;
+        color: #6b7280;
+        margin-left: 0;
+        margin-bottom: 1em;
+    }
+    
+    .content-preview img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Side by side mode */
+    .editor-container {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .side-by-side-mode {
+        display: flex !important;
+        flex-direction: row;
+        gap: 15px;
+    }
+    
+    .side-by-side-mode .editor-textarea-container,
+    .side-by-side-mode .content-preview {
+        width: 50%;
+        display: block;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+    }
+    
+    /* Fullscreen mode */
+    .fullscreen-mode {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: white;
+        z-index: 1050;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .fullscreen-mode .editor-toolbar {
+        margin-bottom: 10px;
+    }
+    
+    .fullscreen-mode .editor-container {
+        flex: 1;
+        overflow: auto;
+    }
+    
+    .fullscreen-exit {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #f3f4f6;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 16px;
+        color: #6b7280;
+    }
+    
+    .fullscreen-exit:hover {
+        background: #e5e7eb;
+        color: #4b5563;
+    }
+    
     /* Responsive */
     @media (max-width: 768px) {
         .form-header {
@@ -228,6 +359,15 @@
         .editor-toolbar-group {
             margin-bottom: 5px;
         }
+        
+        .side-by-side-mode {
+            flex-direction: column;
+        }
+        
+        .side-by-side-mode .editor-textarea-container,
+        .side-by-side-mode .content-preview {
+            width: 100%;
+        }
     }
 
     /* Animation */
@@ -244,6 +384,12 @@
     
     .form-card {
         animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    /* Button active state */
+    .editor-toolbar button.active {
+        background: #e5e7eb;
+        color: #4b5563;
     }
 </style>
 {% endblock %}
@@ -314,7 +460,12 @@
                 </div>
                 
                 <div class="editor-content">
-                    {{ form.content }}
+                    <div class="editor-container">
+                        <div class="editor-textarea-container">
+                            {{ form.content }}
+                        </div>
+                        <div class="content-preview"></div>
+                    </div>
                 </div>
                 
                 {% if form.content.errors %}
@@ -396,10 +547,36 @@
     </div>
 </div>
 
+<!-- Include the marked.js library for markdown rendering -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const textarea = document.getElementById("{{ form.content.id_for_label }}");
         const buttons = document.querySelectorAll('.editor-toolbar button');
+        const previewElement = document.querySelector('.content-preview');
+        const editorContainer = document.querySelector('.editor-container');
+        const textareaContainer = document.querySelector('.editor-textarea-container');
+        const editorContent = document.querySelector('.editor-content');
+        
+        let previewActive = false;
+        let sideBySideActive = false;
+        let fullscreenActive = false;
+        
+        // Initialize marked.js with sensible defaults
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            headerIds: true,
+            headerPrefix: 'heading-',
+            langPrefix: 'language-',
+            mangle: false,
+            sanitize: false,
+            silent: false,
+            smartLists: true,
+            smartypants: true,
+            xhtml: false
+        });
         
         function insertText(textarea, before, after, defaultText) {
             // Get cursor position
@@ -420,61 +597,217 @@
             
             textarea.focus();
             textarea.setSelectionRange(newCursorPos, newCursorPos);
+            
+            // Update preview if active
+            if (previewActive || sideBySideActive) {
+                updatePreview();
+            }
         }
         
-        buttons.forEach(button => {
-            button.addEventListener('click', function() {
-                const action = this.getAttribute('data-action');
+        function updatePreview() {
+            // Convert markdown to HTML using marked.js
+            previewElement.innerHTML = marked.parse(textarea.value);
+            
+            // Apply syntax highlighting if needed
+            // This would require an additional library like highlight.js
+        }
+        
+        function togglePreview() {
+            previewActive = !previewActive;
+            
+            if (previewActive) {
+                // Update and show preview
+                updatePreview();
+                textareaContainer.style.display = 'none';
+                previewElement.style.display = 'block';
+                document.querySelector('button[data-action="preview"]').classList.add('active');
+            } else {
+                // Hide preview, show textarea
+                textareaContainer.style.display = 'block';
+                previewElement.style.display = 'none';
+                document.querySelector('button[data-action="preview"]').classList.remove('active');
+            }
+            
+            // Ensure side-by-side mode is deactivated
+            if (sideBySideActive) {
+                toggleSideBySide();
+            }
+        }
+        
+        function toggleSideBySide() {
+            sideBySideActive = !sideBySideActive;
+            
+            if (sideBySideActive) {
+                // Update and show both side by side
+                updatePreview();
+                editorContainer.classList.add('side-by-side-mode');
+                textareaContainer.style.display = 'block';
+                previewElement.style.display = 'block';
+                document.querySelector('button[data-action="side-by-side"]').classList.add('active');
                 
-                switch(action) {
-                    case 'bold':
-                        insertText(textarea, '**', '**', '');
-                        break;
-                    case 'italic':
-                        insertText(textarea, '*', '*', '');
-                        break;
-                    case 'heading':
-                        insertText(textarea, '## ', '', '');
-                        break;
-                    case 'quote':
-                        insertText(textarea, '> ', '', '');
-                        break;
-                    case 'unordered-list':
-                        insertText(textarea, '- ', '', '');
-                        break;
-                    case 'ordered-list':
-                        insertText(textarea, '1. ', '', '');
-                        break;
-                    case 'link':
-                        insertText(textarea, '[', '](https://example.com)', 'Link text');
-                        break;
-                    case 'image':
-                        insertText(textarea, '![', '](https://example.com/image.jpg)', 'Image description');
-                        break;
-                    case 'code':
-                        insertText(textarea, '```\n', '\n```', '');
-                        break;
-                    case 'table':
-                        insertText(textarea, '| Header 1 | Header 2 |\n| --- | --- |\n| Cell 1 | Cell 2 |\n', '', '');
-                        break;
-                    case 'preview':
-                        // Implement preview functionality if needed
-                        console.log('Preview clicked');
-                        break;
-                    case 'side-by-side':
-                        // Implement side-by-side functionality if needed
-                        console.log('Side by side clicked');
-                        break;
-                    case 'fullscreen':
-                        // Implement fullscreen functionality if needed
-                        console.log('Fullscreen clicked');
-                        break;
-                    case 'help':
-                        // Scroll to markdown tips
-                        document.querySelector('.markdown-tips').scrollIntoView({ behavior: 'smooth' });
-                        break;
+                // Ensure preview-only mode is deactivated
+                previewActive = false;
+                document.querySelector('button[data-action="preview"]').classList.remove('active');
+            } else {
+                // Back to textarea only
+                editorContainer.classList.remove('side-by-side-mode');
+                previewElement.style.display = 'none';
+                document.querySelector('button[data-action="side-by-side"]').classList.remove('active');
+            }
+        }
+        
+        function toggleFullscreen() {
+            fullscreenActive = !fullscreenActive;
+            
+            if (fullscreenActive) {
+                // Enter fullscreen mode
+                const fullscreenWrapper = document.createElement('div');
+                fullscreenWrapper.className = 'fullscreen-mode';
+                fullscreenWrapper.id = 'editor-fullscreen';
+                
+                // Clone the toolbar and editor content
+                const toolbar = document.querySelector('.editor-toolbar').cloneNode(true);
+                const contentClone = editorContent.cloneNode(true);
+                
+                // Add exit button
+                const exitButton = document.createElement('button');
+                exitButton.className = 'fullscreen-exit';
+                exitButton.innerHTML = '<i class="fas fa-times"></i>';
+                exitButton.addEventListener('click', toggleFullscreen);
+                
+                fullscreenWrapper.appendChild(exitButton);
+                fullscreenWrapper.appendChild(toolbar);
+                fullscreenWrapper.appendChild(contentClone);
+                
+                document.body.appendChild(fullscreenWrapper);
+                document.body.style.overflow = 'hidden';
+                
+                // Setup event listeners for the cloned toolbar
+                setupToolbarListeners(fullscreenWrapper);
+                
+                // Update the references to the active textarea and preview
+                const fsTextarea = fullscreenWrapper.querySelector('textarea');
+                const fsPreview = fullscreenWrapper.querySelector('.content-preview');
+                
+                // Sync text with the original textarea
+                fsTextarea.value = textarea.value;
+                
+                // Setup two-way sync between textareas
+                fsTextarea.addEventListener('input', function() {
+                    textarea.value = fsTextarea.value;
+                    if (sideBySideActive) {
+                        fsPreview.innerHTML = marked.parse(fsTextarea.value);
+                    }
+                });
+                
+                document.querySelector('button[data-action="fullscreen"]').classList.add('active');
+            } else {
+                // Exit fullscreen mode
+                const fullscreenWrapper = document.getElementById('editor-fullscreen');
+                
+                // Get the textarea value from fullscreen mode
+                const fsTextarea = fullscreenWrapper.querySelector('textarea');
+                textarea.value = fsTextarea.value;
+                
+                // Remove fullscreen element
+                document.body.removeChild(fullscreenWrapper);
+                document.body.style.overflow = '';
+                
+                document.querySelector('button[data-action="fullscreen"]').classList.remove('active');
+                
+                // Update preview if active
+                if (previewActive || sideBySideActive) {
+                    updatePreview();
                 }
+            }
+        }
+        
+        function setupToolbarListeners(container) {
+            const toolbarButtons = container ? 
+                                 container.querySelectorAll('.editor-toolbar button') : 
+                                 buttons;
+            
+            toolbarButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    const targetTextarea = fullscreenActive ? 
+                                        document.getElementById('editor-fullscreen').querySelector('textarea') : 
+                                        textarea;
+                    
+                    switch(action) {
+                        case 'bold':
+                            insertText(targetTextarea, '**', '**', 'bold text');
+                            break;
+                        case 'italic':
+                            insertText(targetTextarea, '*', '*', 'italic text');
+                            break;
+                        case 'heading':
+                            insertText(targetTextarea, '## ', '', 'Heading');
+                            break;
+                        case 'quote':
+                            insertText(targetTextarea, '> ', '', 'Quote');
+                            break;
+                        case 'unordered-list':
+                            insertText(targetTextarea, '- ', '', 'List item');
+                            break;
+                        case 'ordered-list':
+                            insertText(targetTextarea, '1. ', '', 'List item');
+                            break;
+                        case 'link':
+                            insertText(targetTextarea, '[', '](https://example.com)', 'Link text');
+                            break;
+                        case 'image':
+                            insertText(targetTextarea, '![', '](https://example.com/image.jpg)', 'Image description');
+                            break;
+                        case 'code':
+                            insertText(targetTextarea, '```\n', '\n```', 'code block');
+                            break;
+                        case 'table':
+                            insertText(targetTextarea, '| Header 1 | Header 2 |\n| --- | --- |\n| Cell 1 | Cell 2 |\n', '', '');
+                            break;
+                        case 'preview':
+                            togglePreview();
+                            break;
+                        case 'side-by-side':
+                            toggleSideBySide();
+                            break;
+                        case 'fullscreen':
+                            if (!container) { // Only allow toggling fullscreen from main editor
+                                toggleFullscreen();
+                            }
+                            break;
+                        case 'help':
+                            // Scroll to markdown tips
+                            document.querySelector('.markdown-tips').scrollIntoView({ behavior: 'smooth' });
+                            break;
+                    }
+                });
             });
+        }
+        
+        // Setup event listeners for the main toolbar
+        setupToolbarListeners();
+        
+        // Add real-time preview update
+        textarea.addEventListener('input', function() {
+            if (previewActive || sideBySideActive) {
+                updatePreview();
+            }
+        });
+        
+        // Process keyboard shortcuts
+        textarea.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + B for bold
+            if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+                e.preventDefault();
+                insertText(textarea, '**', '**', 'bold text');
+            }
+            
+            // Ctrl/Cmd + I for italic
+            if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+                e.preventDefault();
+                insertText(textarea, '*', '*', 'italic text');
+            }
         });
         
         // Enhance select elements with better styling
@@ -485,6 +818,9 @@
         
         enhanceSelect(document.getElementById("{{ form.categories.id_for_label }}"));
         enhanceSelect(document.getElementById("{{ form.status.id_for_label }}"));
+        
+        // Add required classes to the textarea
+        textarea.classList.add('form-control');
     });
 </script>
 {% endblock %}

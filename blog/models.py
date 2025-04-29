@@ -17,9 +17,11 @@ class Category(models.Model):
     def __str__(self):
         return self.name
     
+# In models.py - Post model
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = slugify(self.title)
+        self.content_html = markdown(self.content)
         super().save(*args, **kwargs)
     
     def get_absolute_url(self):

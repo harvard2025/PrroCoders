@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Category - PrroCoders{% endblock title %}
+
+{% block body %}
+<div class="category-edit">
+    <h1>Edit Category</h1>
+    
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Category Edit Form -->
+    <div class="category-form">
+        <form method="post" action="{% url 'blog:category_update' category.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Category Name:</label>
+                <input type="text" id="name" name="name" value="{{ category.name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description (optional):</label>
+                <textarea id="description" name="description" rows="3">{{ category.description }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Category</button>
+            <a href="{% url 'blog:manage_categories' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock body %}
