@@ -1,0 +1,140 @@
+{% extends 'layout.html' %}
+{% block title %}Payment Failed{% endblock %}
+
+{% block body %}
+{% load static %}
+
+<style>
+    .failed-container {
+        max-width: 700px;
+        margin: 130px auto 50px;
+        padding: 40px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        text-align: center;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .failed-icon {
+        width: 80px;
+        height: 80px;
+        background-color: #e74c3c;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px;
+    }
+
+    .failed-icon svg {
+        width: 40px;
+        height: 40px;
+        fill: #fff;
+    }
+
+    .failed-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .failed-message {
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+
+    .message-box {
+        background-color: #fff5f5;
+        border-left: 4px solid #e74c3c;
+        padding: 15px 20px;
+        margin-bottom: 30px;
+        text-align: left;
+        border-radius: 4px;
+    }
+
+    .message-box h4 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #e74c3c;
+        margin-bottom: 8px;
+    }
+
+    .message-box p {
+        font-size: 14px;
+        color: #555;
+        margin: 0;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        border-radius: 30px;
+        font-size: 16px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(52, 152, 219, 0.5);
+    }
+
+    .btn-secondary {
+        background-color: #ecf0f1;
+        color: #555;
+    }
+
+    .btn-secondary:hover {
+        background-color: #dfe6e9;
+    }
+
+    @media (max-width: 768px) {
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="failed-container">
+    <div class="failed-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
+    </div>
+    
+    <h1 class="failed-title">Payment Failed</h1>
+    <p class="failed-message">
+        We encountered an issue while processing your payment. No charges have been made to your account.
+    </p>
+    
+    <div class="message-box">
+        <h4>Common reasons for payment failure:</h4>
+        <p>• Insufficient card balance</p>
+        <p>• Card details entered incorrectly</p>
+        <p>• Connection timeout</p>
+        <p>• Banking restrictions</p>
+    </div>
+    
+    <div class="action-buttons">
+        <a href="#" onclick="history.back();" class="btn btn-primary">Try Again</a>
+        <a href="{% url 'store:store' 1 %}" class="btn btn-secondary">Return to Store</a>
+    </div>
+</div>
+{% endblock %}

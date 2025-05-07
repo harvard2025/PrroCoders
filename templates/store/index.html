@@ -183,7 +183,7 @@
         {% for Product in Products %}
             {% if Product.isActive == True %}
             
-                <a href="{% if user.is_authenticated %}{% else %}{% url 'Login' %}{% endif %}" class="a-Cource">
+                <a href="{% if user.is_authenticated %}{% url 'store:product_detail' Product.id %}{% else %}{% url 'Login' %}{% endif %}" class="a-Cource">
                     <div class="Cource">
                         <div class="img-container">
                             {% if Product.image %}

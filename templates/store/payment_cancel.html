@@ -1,0 +1,111 @@
+{% extends 'layout.html' %}
+{% block title %}Payment Cancelled{% endblock %}
+
+{% block body %}
+{% load static %}
+
+<style>
+    .cancel-container {
+        max-width: 700px;
+        margin: 130px auto 50px;
+        padding: 40px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        text-align: center;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .cancel-icon {
+        width: 80px;
+        height: 80px;
+        background-color: #e74c3c;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px;
+    }
+
+    .cancel-icon svg {
+        width: 40px;
+        height: 40px;
+        fill: #fff;
+    }
+
+    .cancel-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .cancel-message {
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        border-radius: 30px;
+        font-size: 16px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(52, 152, 219, 0.5);
+    }
+
+    .btn-secondary {
+        background-color: #ecf0f1;
+        color: #555;
+    }
+
+    .btn-secondary:hover {
+        background-color: #dfe6e9;
+    }
+
+    @media (max-width: 768px) {
+        .action-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="cancel-container">
+    <div class="cancel-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+    </div>
+    
+    <h1 class="cancel-title">Payment Cancelled</h1>
+    <p class="cancel-message">
+        Your payment process was cancelled. No charges have been made to your account.
+        If you have any questions or encountered any issues, please feel free to contact us.
+    </p>
+    
+    <div class="action-buttons">
+        <a href="{% url 'store:store' 1 %}" class="btn btn-primary">Return to Store</a>
+        <a href="#" onclick="history.back();" class="btn btn-secondary">Go Back</a>
+    </div>
+</div>
+{% endblock %}
