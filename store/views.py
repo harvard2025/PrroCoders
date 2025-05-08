@@ -93,8 +93,30 @@ def add_product(request):
             cat=category
         )
         
-        return redirect('store:store', page=1)  # Redirect to store page
+        return redirect('store:store', use=1)  # Redirect to store page
     
     # GET request - show form
     categories = categoryS.objects.all()
     return render(request, 'store/add_product.html', {'categories': categories})
+
+
+
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import Product
+
+@login_required
+def delete_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    # اختياري: السماح فقط لصاحب المنتج أو الأدمن بالحذف
+    if request.user.is_superuser or request.user.username == product.By:
+        product.delete()
+        messages.success(request, 'Product deleted successfully.')
+        return redirect('store:store', use=1)  # رجع للقائمة أو أي مكان مناسب
+    else:
+        messages.error(request, 'You are not authorized to delete this product.')
+        return redirect('store:product_detail', product_id=product_id)

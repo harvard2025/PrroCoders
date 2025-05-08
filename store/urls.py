@@ -17,4 +17,6 @@ urlpatterns = [
     path('webhook/stripe/', payment_views.stripe_webhook, name='stripe_webhook'),
     path('my-purchases/', payment_views.my_purchases, name='my_purchases'),
     path('add-product/', views.add_product, name='add_product'),
+    path('product/delete/<int:product_id>/', views.delete_product, name='delete_product'),
+
 ]
