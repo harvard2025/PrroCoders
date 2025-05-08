@@ -1,119 +1,315 @@
 {% extends 'network/layout.html' %}
 {% load static %}
 
-{% block content %}
-<!-- Header -->
-<div class="content-header">
-    <h2>Home</h2>
-</div>
+{% block body %}
+<div class="network-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{% url 'network:index' %}" class="active">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'network:trending' %}">
+                    <i class="fas fa-hashtag"></i>
+                    <span>Explore</span>
+                </a>
+            </li>
+            {% if user.is_authenticated %}
+            <li>
+                <a href="{% url 'network:notifications' %}">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                    <span class="notification-badge badge" id="notifications-badge"></span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'network:messages' %}">
+                    <i class="fas fa-envelope"></i>
+                    <span>Messages</span>
+                    <span class="message-badge badge" id="messages-badge"></span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'network:profile' user.username %}">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            {% endif %}
+            <li>
+                <a href="{% url 'network:search' %}">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+            </li>
+        </ul>
+    </div>
 
-<!-- Post form -->
-{% if user.is_authenticated %}
-<div class="post-form">
-    <form action="{% url 'network:create_post' %}" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <textarea name="content" class="post-textarea" placeholder="What's happening?" rows="3"></textarea>
-        <div class="post-actions">
-            <div class="post-icons">
-                <label for="image-upload" class="post-icon" title="Add image">
-                    <i class="far fa-image"></i>
-                </label>
-                <input type="file" id="image-upload" name="image" style="display: none;" accept="image/*">
-            </div>
-            <button type="submit" class="btn-post">Post</button>
+    <!-- Main Content -->
+    <div class="content">
+        <div class="content-header">
+            <span>Home</span>
         </div>
-    </form>
-</div>
-{% endif %}
 
-<!-- Posts -->
-<div class="posts-container">
-    {% if page_obj %}
-        {% for post in page_obj %}
-            <div class="post-card" onclick="window.location='#'">
-                <div class="post-header">
-                    <div class="post-avatar">
-                        {% if post.user.profile_image %}
-                            <img src="{{ post.user.profile_image.url }}" alt="{{ post.user.username }}">
-                        {% else %}
-                            {{ post.user.username|make_list|first|upper }}
-                        {% endif %}
+        {% if user.is_authenticated %}
+        <div class="post-form">
+            <form action="{% url 'network:create_post' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <textarea name="content" class="post-textarea" placeholder="What's happening?" required></textarea>
+                <div class="post-actions">
+                    <div class="post-icons">
+                        <label for="post-image" class="post-icon">
+                            <i class="far fa-image"></i>
+                        </label>
+                        <input type="file" id="post-image" name="image" accept="image/*" style="display: none;">
                     </div>
+                    <button type="submit" class="btn-post">Post</button>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+
+        <div class="posts-container">
+            {% for post in page_obj %}
+            <div class="post-card">
+                <div class="post-header">
+                    <a href="{% url 'network:profile' post.user.username %}" class="post-avatar">
+                        {% if post.user.profile_image %}
+                        <img src="{{ post.user.profile_image.url }}" alt="{{ post.user.username }}">
+                        {% else %}
+                        {{ post.user.username.0|upper }}
+                        {% endif %}
+                    </a>
                     <div class="post-user">
-                        <h3 class="post-user-name">{{ post.user.first_name }} {{ post.user.last_name }}</h3>
+                        <h3 class="post-user-name">{{ post.user.get_full_name|default:post.user.username }}</h3>
                         <p class="post-username">@{{ post.user.username }}</p>
                     </div>
-                    <div class="post-time">
-                        {{ post.created_at|timesince }} ago
-                    </div>
+                    <span class="post-time">{{ post.created_at }}</span>
                 </div>
                 <div class="post-content">
-                    {{ post.content|linebreaks }}
+                    {{ post.content }}
                 </div>
                 {% if post.image %}
-                    <img src="{{ post.image.url }}" alt="Post image" class="post-image">
+                <img src="{{ post.image.url }}" alt="Post image" class="post-image">
                 {% endif %}
                 <div class="post-footer">
-                    <div class="post-action comment-button">
+                    <div class="post-action comment-action" onclick="showCommentForm({{ post.id }})">
                         <i class="far fa-comment"></i>
                         <span>{{ post.comments.count }}</span>
                     </div>
-                    <div class="post-action like-button {% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
-                        <i class="{% if user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                    <div class="post-action like-action {% if user.is_authenticated and user in post.likes.all %}liked{% endif %}" 
+                         onclick="likePost({{ post.id }})">
+                        <i class="{% if user.is_authenticated and user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
                         <span class="like-count">{{ post.likes.count }}</span>
                     </div>
-                    {% if post.user == user %}
-                        <div class="post-action">
-                            <a href="{% url 'network:delete_post' post.id %}" onclick="return confirm('Are you sure you want to delete this post?');">
-                                <i class="far fa-trash-alt"></i>
-                            </a>
-                        </div>
+                    {% if user == post.user %}
+                    <div class="post-action">
+                        <i class="fas fa-ellipsis-h" onclick="showPostOptions({{ post.id }})"></i>
+                    </div>
                     {% endif %}
                 </div>
+                <!-- Hidden comment form -->
+                <div class="comment-form" id="comment-form-{{ post.id }}" style="display: none;">
+                    <textarea class="comment-textarea" id="comment-content-{{ post.id }}" placeholder="Write a comment..."></textarea>
+                    <button class="btn-comment" onclick="submitComment({{ post.id }})">Comment</button>
+                </div>
+                <!-- Post options dropdown -->
+                <div class="post-options" id="post-options-{{ post.id }}" style="display: none;">
+                    <div class="post-option" onclick="editPost({{ post.id }})">
+                        <i class="fas fa-edit"></i> Edit
+                    </div>
+                    <div class="post-option" onclick="deletePost({{ post.id }})">
+                        <i class="fas fa-trash"></i> Delete
+                    </div>
+                </div>
             </div>
-        {% endfor %}
-        
+            {% empty %}
+            <div class="empty-state">
+                <p>No posts to display</p>
+            </div>
+            {% endfor %}
+        </div>
+
         <!-- Pagination -->
-        <div class="pagination" style="padding: 15px; text-align: center;">
+        <div class="pagination">
             <span class="step-links">
                 {% if page_obj.has_previous %}
-                    <a href="?page=1" style="color: var(--accent-color);">&laquo; first</a>
-                    <a href="?page={{ page_obj.previous_page_number }}" style="color: var(--accent-color);">previous</a>
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
                 {% endif %}
-
-                <span class="current" style="margin: 0 10px;">
+                
+                <span class="current">
                     Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                 </span>
-
+                
                 {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}" style="color: var(--accent-color);">next</a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}" style="color: var(--accent-color);">last &raquo;</a>
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
                 {% endif %}
             </span>
         </div>
-    {% else %}
-        <div style="padding: 20px; text-align: center;">
-            <p>No posts yet. Be the first to share something!</p>
+    </div>
+
+    <!-- Trending Section -->
+    <div class="trending">
+        <div class="trending-card">
+            <h3>Trending</h3>
+            {% for trend in trends %}
+            <div class="trending-item">
+                <h4>#{{ trend.name }}</h4>
+                <p>{{ trend.post_count }} posts</p>
+            </div>
+            {% empty %}
+            <div class="trending-item">
+                <p>No trending topics</p>
+            </div>
+            {% endfor %}
         </div>
-    {% endif %}
+    </div>
 </div>
 
-<!-- JavaScript for image upload preview -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const fileInput = document.getElementById('image-upload');
-        if (fileInput) {
-            fileInput.addEventListener('change', function() {
-                const fileLabel = document.querySelector('label[for="image-upload"]');
-                if (this.files.length > 0) {
-                    fileLabel.innerHTML = '<i class="fas fa-image"></i>';
-                    fileLabel.style.color = 'var(--success-color)';
+    // Function to show/hide comment form
+    function showCommentForm(postId) {
+        const commentForm = document.getElementById(`comment-form-${postId}`);
+        if (commentForm.style.display === 'none') {
+            commentForm.style.display = 'block';
+        } else {
+            commentForm.style.display = 'none';
+        }
+    }
+
+    // Function to submit comment
+    function submitComment(postId) {
+        const content = document.getElementById(`comment-content-${postId}`).value;
+        if (!content) return;
+
+        fetch(`/post/${postId}/comment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                content: content
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update comment count and hide form
+            document.getElementById(`comment-form-${postId}`).style.display = 'none';
+            document.getElementById(`comment-content-${postId}`).value = '';
+            const commentCount = document.querySelector(`.comment-action[onclick="showCommentForm(${postId})"] span`);
+            commentCount.textContent = parseInt(commentCount.textContent) + 1;
+        });
+    }
+
+    // Function to like/unlike post
+    function likePost(postId) {
+        fetch(`/post/${postId}/like`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const likeButton = document.querySelector(`.like-action[onclick="likePost(${postId})"]`);
+            const likeIcon = likeButton.querySelector('i');
+            const likeCount = likeButton.querySelector('.like-count');
+            
+            likeCount.textContent = data.likes_count;
+            
+            if (data.status === 'liked') {
+                likeButton.classList.add('liked');
+                likeIcon.classList.remove('far');
+                likeIcon.classList.add('fas');
+            } else {
+                likeButton.classList.remove('liked');
+                likeIcon.classList.remove('fas');
+                likeIcon.classList.add('far');
+            }
+        });
+    }
+
+    // Function to show post options
+    function showPostOptions(postId) {
+        const options = document.getElementById(`post-options-${postId}`);
+        if (options.style.display === 'none') {
+            options.style.display = 'block';
+        } else {
+            options.style.display = 'none';
+        }
+    }
+
+    // Function to edit post
+    function editPost(postId) {
+        // Implement post editing UI
+        console.log(`Edit post ${postId}`);
+    }
+
+    // Function to delete post
+    function deletePost(postId) {
+        if (confirm('Are you sure you want to delete this post?')) {
+            window.location.href = `/post/${postId}/delete`;
+        }
+    }
+
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Update notification badges
+    function updateNotificationBadges() {
+        {% if user.is_authenticated %}
+        // Get unread notifications count
+        fetch('/api/notifications/count')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('notifications-badge');
+                if (data.count > 0) {
+                    badge.textContent = data.count;
+                    badge.style.display = 'inline';
                 } else {
-                    fileLabel.innerHTML = '<i class="far fa-image"></i>';
-                    fileLabel.style.color = 'var(--accent-color)';
+                    badge.style.display = 'none';
                 }
             });
-        }
-    });
+        
+        // Get unread messages count
+        fetch('/api/messages/count')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('messages-badge');
+                if (data.count > 0) {
+                    badge.textContent = data.count;
+                    badge.style.display = 'inline';
+                } else {
+                    badge.style.display = 'none';
+                }
+            });
+        {% endif %}
+    }
+
+    // Call once on page load
+    updateNotificationBadges();
+    
+    // Update every 30 seconds
+    setInterval(updateNotificationBadges, 30000);
 </script>
-{% endblock content %}
+{% endblock %}

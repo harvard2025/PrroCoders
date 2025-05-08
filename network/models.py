@@ -12,6 +12,22 @@ class User(AbstractUser):
     birth_date = models.DateField(null=True, blank=True)
     followers = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
     
+    # Add related_name to avoid clash with auth.User
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='network_user_set',
+        blank=True,
+        help_text='The groups this user belongs to.',
+        verbose_name='groups',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='network_user_set',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions',
+    )
+    
     def __str__(self):
         return self.username
     
@@ -31,6 +47,7 @@ class Post(models.Model):
     content = models.TextField(max_length=280)
     image = models.ImageField(upload_to='post_images/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    edited_at = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(User, related_name="liked_posts", blank=True)
     
     class Meta:
@@ -48,7 +65,7 @@ class Post(models.Model):
             "created_at": self.created_at.strftime("%b %d %Y, %I:%M %p"),
             "likes_count": self.likes.count(),
             "comments_count": self.comments.count(),
-            "is_edited": self.created_at != self.edited_at if hasattr(self, 'edited_at') else False
+            "is_edited": self.created_at != self.edited_at
         }
 
 
