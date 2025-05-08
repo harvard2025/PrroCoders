@@ -1,0 +1,119 @@
+{% extends 'network/layout.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Header -->
+<div class="content-header">
+    <h2>Home</h2>
+</div>
+
+<!-- Post form -->
+{% if user.is_authenticated %}
+<div class="post-form">
+    <form action="{% url 'network:create_post' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <textarea name="content" class="post-textarea" placeholder="What's happening?" rows="3"></textarea>
+        <div class="post-actions">
+            <div class="post-icons">
+                <label for="image-upload" class="post-icon" title="Add image">
+                    <i class="far fa-image"></i>
+                </label>
+                <input type="file" id="image-upload" name="image" style="display: none;" accept="image/*">
+            </div>
+            <button type="submit" class="btn-post">Post</button>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+<!-- Posts -->
+<div class="posts-container">
+    {% if page_obj %}
+        {% for post in page_obj %}
+            <div class="post-card" onclick="window.location='#'">
+                <div class="post-header">
+                    <div class="post-avatar">
+                        {% if post.user.profile_image %}
+                            <img src="{{ post.user.profile_image.url }}" alt="{{ post.user.username }}">
+                        {% else %}
+                            {{ post.user.username|make_list|first|upper }}
+                        {% endif %}
+                    </div>
+                    <div class="post-user">
+                        <h3 class="post-user-name">{{ post.user.first_name }} {{ post.user.last_name }}</h3>
+                        <p class="post-username">@{{ post.user.username }}</p>
+                    </div>
+                    <div class="post-time">
+                        {{ post.created_at|timesince }} ago
+                    </div>
+                </div>
+                <div class="post-content">
+                    {{ post.content|linebreaks }}
+                </div>
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="Post image" class="post-image">
+                {% endif %}
+                <div class="post-footer">
+                    <div class="post-action comment-button">
+                        <i class="far fa-comment"></i>
+                        <span>{{ post.comments.count }}</span>
+                    </div>
+                    <div class="post-action like-button {% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
+                        <i class="{% if user in post.likes.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                        <span class="like-count">{{ post.likes.count }}</span>
+                    </div>
+                    {% if post.user == user %}
+                        <div class="post-action">
+                            <a href="{% url 'network:delete_post' post.id %}" onclick="return confirm('Are you sure you want to delete this post?');">
+                                <i class="far fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+        
+        <!-- Pagination -->
+        <div class="pagination" style="padding: 15px; text-align: center;">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1" style="color: var(--accent-color);">&laquo; first</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" style="color: var(--accent-color);">previous</a>
+                {% endif %}
+
+                <span class="current" style="margin: 0 10px;">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" style="color: var(--accent-color);">next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" style="color: var(--accent-color);">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    {% else %}
+        <div style="padding: 20px; text-align: center;">
+            <p>No posts yet. Be the first to share something!</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- JavaScript for image upload preview -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('image-upload');
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                const fileLabel = document.querySelector('label[for="image-upload"]');
+                if (this.files.length > 0) {
+                    fileLabel.innerHTML = '<i class="fas fa-image"></i>';
+                    fileLabel.style.color = 'var(--success-color)';
+                } else {
+                    fileLabel.innerHTML = '<i class="far fa-image"></i>';
+                    fileLabel.style.color = 'var(--accent-color)';
+                }
+            });
+        }
+    });
+</script>
+{% endblock content %}

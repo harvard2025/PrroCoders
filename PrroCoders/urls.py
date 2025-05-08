@@ -29,6 +29,7 @@ urlpatterns = [
     path('Web/',include('WebMaker.urls')),
     path('products/',include('store.urls')),
     path('blog/',include('blog.urls'), name='blog'),
+    path('Community/',include('network.urls'), name='network'),
 
 ]
 if settings.DEBUG:
