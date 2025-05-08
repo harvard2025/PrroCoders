@@ -15,6 +15,9 @@ class Cource(models.Model):
     By = models.CharField(max_length=30)
     price = models.IntegerField()
     lang = models.ForeignKey(lang, on_delete=models.CASCADE, related_name='Cource')
+    def get_stripe_price(self):
+        """Return price in cents for Stripe"""
+        return self.price * 100
     
 
 
@@ -67,3 +70,8 @@ class Certificate(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.course.Name}"
+    
+
+
+
+# In CourcePanal/models.py

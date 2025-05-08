@@ -4,6 +4,279 @@
 {% load static %}
 
 <link rel="stylesheet" href="{% static 'Cource/style.css' %}">
+<style>
+    /* Add these styles to your existing style.css file */
+
+    /* Search Container */
+    .search-container {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    }
+
+    .search-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    }
+
+    .search-wrapper {
+    display: flex;
+    position: relative;
+    transition: all 0.3s ease;
+    }
+
+    .search-wrapper.focused {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
+    }
+
+    .search-input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+    background: #fff;
+    color: #1e293b;
+    }
+
+    .search-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .search-input::placeholder {
+    color: #94a3b8;
+    transition: all 0.3s ease;
+    }
+
+    .search-input:focus::placeholder {
+    opacity: 0.7;
+    transform: translateX(5px);
+    }
+
+    .search-button {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #3b82f6;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    }
+
+    .search-button:hover {
+    background: #2563eb;
+    transform: translateY(-50%) scale(1.05);
+    }
+
+    .search-button:active {
+    transform: translateY(-50%) scale(0.95);
+    }
+
+    /* Filter buttons */
+    .search-filter {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    }
+
+    .filter-label {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-right: 0.5rem;
+    }
+
+    .filter-btn {
+    padding: 0.5rem 1rem;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+    background: #e2e8f0;
+    color: #334155;
+    }
+
+    .filter-btn.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    font-weight: 500;
+    }
+
+    /* Search Results Count */
+    .search-results-count {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: #64748b;
+    }
+
+    /* No Results */
+    .no-results-container {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 3rem 0;
+    }
+
+    .no-results-content {
+    text-align: center;
+    max-width: 400px;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    }
+
+    .no-results-content svg {
+    color: #94a3b8;
+    }
+
+    .no-results-content h3 {
+    font-size: 1.25rem;
+    color: #334155;
+    margin: 0;
+    }
+
+    .no-results-content p {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+    }
+
+    .reset-button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    }
+
+    .reset-button:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    }
+
+    .reset-button:active {
+    transform: translateY(0);
+    }
+
+    /* Course Card Search Highlighting */
+    .a-Cource.search-match {
+    animation: search-highlight 1s ease forwards;
+    }
+
+    @keyframes search-highlight {
+    0% {
+        transform: translateY(0);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    50% {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(59, 130, 246, 0.2);
+    }
+    100% {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(59, 130, 246, 0.15);
+    }
+    }
+
+    /* Pulse animation for search reset */
+    .focus-pulse {
+    animation: focus-pulse 0.8s ease;
+    }
+
+    @keyframes focus-pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.3);
+    }
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+    .search-container {
+        padding: 1rem;
+    }
+    
+    .search-input {
+        padding: 0.75rem 1rem;
+    }
+    
+    .search-button {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .filter-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    }
+</style>
+<!-- Search Bar Section -->
+<div class="search-container">
+    <div class="search-wrapper">
+        <input type="text" id="courseSearch" class="search-input" placeholder="Search courses by name or description...">
+        <button class="search-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+        </button>
+    </div>
+    <div class="search-filter">
+        <span class="filter-label">Filter by:</span>
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="free">Free</button>
+        <button class="filter-btn" data-filter="paid">Paid</button>
+    </div>
+    <div class="search-results-count">
+        <span id="courseCount">Showing all courses</span>
+    </div>
+</div>
 
 {% if user.is_staff %}
 <div class="admin footer1">
@@ -14,8 +287,11 @@
 <div class="Cources">
     {% for Cource in Cources %}
         {% if Cource.isActive == True %}
-        
-            <a href="{% if user.is_authenticated %}{% url 'oneCource' Cource.id %}{% else %}{% url 'Login' %}{% endif %}" class="a-Cource">
+            <a href="{% if user.is_authenticated %}{% url 'oneCource' Cource.id %}{% else %}{% url 'Login' %}{% endif %}" 
+               class="a-Cource" 
+               data-category="{% if Cource.price == 0 %}free{% else %}paid{% endif %}"
+               data-name="{{ Cource.Name|lower }}"
+               data-description="{{ Cource.description|lower }}">
                 <div class="Cource">
                     <div class="img-container">
                         {% if Cource.image %}
@@ -48,6 +324,20 @@
     {% endfor %}
 </div>
 
+<!-- Empty search results message -->
+<div id="no-results" class="no-results-container" style="display: none;">
+    <div class="no-results-content">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <line x1="8" y1="11" x2="14" y2="11"></line>
+        </svg>
+        <h3>No courses found</h3>
+        <p>Try changing your search terms or filters</p>
+        <button id="reset-search" class="reset-button">Clear Search</button>
+    </div>
+</div>
+
 <script>
     // Staggered animation for course cards
     document.addEventListener('DOMContentLoaded', function() {
@@ -72,15 +362,137 @@
                 item.classList.remove('skeleton');
             });
         }, 800);
+        
+        // Search functionality
+        const searchInput = document.getElementById('courseSearch');
+        const courseCards = document.querySelectorAll('.a-Cource');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const courseCount = document.getElementById('courseCount');
+        const noResults = document.getElementById('no-results');
+        const resetButton = document.getElementById('reset-search');
+        
+        let activeFilter = 'all';
+        
+        // Filter function
+        function filterCourses() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+            
+            courseCards.forEach(card => {
+                const cardName = card.getAttribute('data-name');
+                const cardDescription = card.getAttribute('data-description');
+                const cardCategory = card.getAttribute('data-category');
+                
+                // Check if card matches both search term and category filter
+                const matchesSearch = searchTerm === '' || 
+                                      cardName.includes(searchTerm) || 
+                                      cardDescription.includes(searchTerm);
+                const matchesFilter = activeFilter === 'all' || cardCategory === activeFilter;
+                
+                if (matchesSearch && matchesFilter) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                    
+                    // Add highlight effect for search matches if there's a search term
+                    if (searchTerm !== '') {
+                        card.classList.add('search-match');
+                    } else {
+                        card.classList.remove('search-match');
+                    }
+                } else {
+                    card.style.display = 'none';
+                    card.classList.remove('search-match');
+                }
+            });
+            
+            // Update results count
+            updateResultsCount(visibleCount, searchTerm);
+            
+            // Show/hide no results message
+            if (visibleCount === 0) {
+                noResults.style.display = 'flex';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+        
+        // Update the results count text
+        function updateResultsCount(count, searchTerm) {
+            if (searchTerm !== '') {
+                if (count === 1) {
+                    courseCount.textContent = `Found 1 course for "${searchTerm}"`;
+                } else {
+                    courseCount.textContent = `Found ${count} courses for "${searchTerm}"`;
+                }
+            } else if (activeFilter !== 'all') {
+                if (count === 1) {
+                    courseCount.textContent = `Showing 1 ${activeFilter} course`;
+                } else {
+                    courseCount.textContent = `Showing ${count} ${activeFilter} courses`;
+                }
+            } else {
+                if (count === 1) {
+                    courseCount.textContent = `Showing 1 course`;
+                } else {
+                    courseCount.textContent = `Showing all ${count} courses`;
+                }
+            }
+        }
+        
+        // Event listeners
+        searchInput.addEventListener('input', filterCourses);
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active button styling
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Set active filter
+                activeFilter = button.getAttribute('data-filter');
+                
+                // Apply filters
+                filterCourses();
+            });
+        });
+        
+        // Reset search and filters
+        resetButton.addEventListener('click', () => {
+            searchInput.value = '';
+            activeFilter = 'all';
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-filter') === 'all') {
+                    btn.classList.add('active');
+                }
+            });
+            filterCourses();
+            
+            // Add focus animation
+            searchInput.classList.add('focus-pulse');
+            setTimeout(() => {
+                searchInput.classList.remove('focus-pulse');
+            }, 800);
+        });
+        
+        // Search button click event
+        document.querySelector('.search-button').addEventListener('click', filterCourses);
+        
+        // Add fancy search input focus effects
+        searchInput.addEventListener('focus', () => {
+            document.querySelector('.search-wrapper').classList.add('focused');
+        });
+        
+        searchInput.addEventListener('blur', () => {
+            document.querySelector('.search-wrapper').classList.remove('focused');
+        });
     });
 </script>
 
 
 <script>
-        // Create a new file: static/Cource/animations.js
-
+    // Elements for animation
     document.addEventListener('DOMContentLoaded', function() {
-        // Elements for animation
         const courseCards = document.querySelectorAll('.Cource');
         const badges = document.querySelectorAll('.badge');
         const learnButtons = document.querySelectorAll('.learn-more');
@@ -142,100 +554,22 @@
             });
         });
         
-        // Filter animation (for potential future filtering functionality)
-        function setUpFiltering() {
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            if (filterButtons.length === 0) return;
-            
-            filterButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const filterValue = button.getAttribute('data-filter');
-                    
-                    // Remove active class from all buttons
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    
-                    // Add active class to clicked button
-                    button.classList.add('active');
-                    
-                    // Filter courses
-                    courseCards.forEach(card => {
-                        const cardParent = card.parentElement;
-                        if (filterValue === 'all') {
-                            cardParent.style.display = 'block';
-                            setTimeout(() => {
-                                cardParent.style.opacity = '1';
-                                cardParent.style.transform = 'translateY(0)';
-                            }, 50);
-                        } else {
-                            if (card.getAttribute('data-category') === filterValue) {
-                                cardParent.style.display = 'block';
-                                setTimeout(() => {
-                                    cardParent.style.opacity = '1';
-                                    cardParent.style.transform = 'translateY(0)';
-                                }, 50);
-                            } else {
-                                cardParent.style.opacity = '0';
-                                cardParent.style.transform = 'translateY(20px)';
-                                setTimeout(() => {
-                                    cardParent.style.display = 'none';
-                                }, 300);
-                            }
-                        }
-                    });
-                });
-            });
-        }
+        // Add search animation effects
+        const searchInput = document.querySelector('.search-input');
         
-        // Initialize filtering if needed
-        setUpFiltering();
-        
-        // Progress bar animation for course completion (for future use)
-        function initializeProgressBars() {
-            const progressBars = document.querySelectorAll('.progress-bar');
-            
-            progressBars.forEach(progressBar => {
-                const progress = progressBar.getAttribute('data-progress');
-                progressBar.style.width = '0%';
-                
-                setTimeout(() => {
-                    progressBar.style.transition = 'width 1s ease-in-out';
-                    progressBar.style.width = progress + '%';
-                }, 300);
-            });
-        }
-        
-        // Implement search highlight animation (for future search functionality)
-        function setupSearch() {
-            const searchInput = document.querySelector('.search-input');
-            if (!searchInput) return;
-            
+        // Search as you type highlight effect
+        if (searchInput) {
             searchInput.addEventListener('input', (e) => {
                 const searchTerm = e.target.value.toLowerCase().trim();
                 
-                courseCards.forEach(card => {
-                    const cardTitle = card.querySelector('.name').textContent.toLowerCase();
-                    const cardDesc = card.querySelector('.des').textContent.toLowerCase();
-                    
-                    if (searchTerm === '') {
-                        // Reset all cards
-                        card.style.transform = 'scale(1)';
-                        card.style.boxShadow = 'var(--card-shadow)';
-                    } else if (cardTitle.includes(searchTerm) || cardDesc.includes(searchTerm)) {
-                        // Highlight matching cards
-                        card.style.transform = 'scale(1.03)';
-                        card.style.boxShadow = '0 15px 30px rgba(0, 118, 219, 0.2)';
-                    } else {
-                        // Dim non-matching cards
-                        card.style.transform = 'scale(0.98)';
-                        card.style.boxShadow = '0 5px 10px rgba(0, 0, 0, 0.05)';
-                    }
-                });
+                if (searchTerm === '') {
+                    document.querySelectorAll('.search-highlight').forEach(el => {
+                        // Remove any previous search highlighting
+                        el.outerHTML = el.textContent;
+                    });
+                }
             });
         }
-        
-        // Initialize functionality
-        setupSearch();
-        initializeProgressBars();
     });
 </script>
 {% endblock %}

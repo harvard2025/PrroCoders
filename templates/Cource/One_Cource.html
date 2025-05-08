@@ -259,18 +259,19 @@
         <div class="cont">
             <h1 class="name animate__animated animate__fadeInDown">{{Cource.Name}}</h1>
             <p class="desk animate__animated animate__fadeIn">{{Cource.description}}</p>
+            <!-- Find this section in templates/Cource/One_Cource.html -->
             {% if user.is_authenticated %}
                 {% if not isSub %}
                     {% if Cource.price == 0 %}
                         <a href="{% url 'sub' Cource.id %}" class="sub animate__animated animate__fadeInUp">Subscribe</a>
                     {% else %}
-                        <a href="" class="buy animate__animated animate__fadeInUp">Buy</a>
+                        <a href="{% url 'course_payment' Cource.id %}" class="buy animate__animated animate__fadeInUp">Buy</a>
                     {% endif %}
                 {% else %}
                     {% if Cource.price == 0 %}
                         <a href="{% url 'unsub' Cource.id %}" class="un sub animate__animated animate__fadeInUp">UnSubscribe</a>
                     {% else %}
-                        <a href="" class="buy animate__animated animate__fadeInUp">Buy</a>
+                        <a href="#" class="buy animate__animated animate__fadeInUp">Already Purchased</a>
                     {% endif %}
                 {% endif %}
             {% else %}

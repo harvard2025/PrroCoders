@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect ,HttpResponse
 from .models import Cource, Lesson, Subscribe,Exam,Q,lang, Done_Lessons
 from django.contrib.auth.models import AbstractUser, User
 from django.urls import reverse
 import random
+from PrroCoders import settings
+from django.http import JsonResponse
 # Create your views here.
 def Cource_view(request):
     return render(request, 'Cource/index.html', {
@@ -252,3 +254,96 @@ def add_Cource(request):
         return render(request, 'Cource/add_Cource.html',{
             'langs': lang.objects.all()
         })
+    
+
+
+
+# Import necessary modules at the top of the file
+from django.conf import settings
+from django.http import JsonResponse
+import stripe
+
+# Configure Stripe - Add this near the top after imports
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+def course_payment(request, id):
+    """Display payment page for a course"""
+    course = Cource.objects.get(pk=id)
+    context = {
+        'course': course,
+        'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
+    }
+    return render(request, 'Cource/course_payment.html', context)
+
+def course_checkout(request, id):
+    """Create a Stripe checkout session for the course"""
+    course = Cource.objects.get(pk=id)
+    
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': course.Name,
+                        'description': course.description,
+                    },
+                    'unit_amount': course.get_stripe_price(),
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url=request.build_absolute_uri(
+                reverse('payment_success_course')
+            ) + f'?session_id={{CHECKOUT_SESSION_ID}}&course_id={course.id}',
+            cancel_url=request.build_absolute_uri(reverse('payment_cancel_course')),
+            metadata={
+                'course_id': course.id,
+                'user_id': request.user.id,
+            }
+        )
+        
+        return JsonResponse({'id': checkout_session.id})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def payment_success_course(request):
+    """Handle successful course payment"""
+    session_id = request.GET.get('session_id')
+    course_id = request.GET.get('course_id')
+    
+    if not session_id:
+        return redirect('Cource')
+    
+    try:
+        # Retrieve the session
+        session = stripe.checkout.Session.retrieve(session_id)
+        payment_intent = stripe.PaymentIntent.retrieve(session.payment_intent)
+        
+        if payment_intent.status == 'succeeded':
+            # Create course subscription
+            course = Cource.objects.get(pk=course_id)
+            user = request.user
+            
+            # Default certificate name (can be updated later)
+            cert_name = f"{user.first_name} {user.last_name}" if user.first_name else user.username
+            
+            # Create the subscription
+            new_sub = Subscribe.objects.create(
+                User=user,
+                Certificate_Name=cert_name,
+                Cource=course
+            )
+            
+            return render(request, 'Cource/payment_success_course.html', {
+                'course': course
+            })
+            
+    except Exception as e:
+        print(str(e))
+        return redirect('payment_cancel_course')
+
+def payment_cancel_course(request):
+    """Handle canceled course payment"""
+    return render(request, 'Cource/payment_cancel_course.html')

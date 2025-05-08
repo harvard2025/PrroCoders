@@ -5,7 +5,7 @@ from . import payment_views
 app_name = 'store'
 urlpatterns = [
     # Existing views
-    path('/use_<int:use>', views.index, name='store'),
+    path('use_<int:use>', views.index, name='store'),
     
     # Payment views
     path('product/<int:product_id>/', payment_views.product_detail, name='product_detail'),
@@ -16,4 +16,5 @@ urlpatterns = [
     path('order/success/<int:order_id>/', payment_views.order_success, name='order_success'),
     path('webhook/stripe/', payment_views.stripe_webhook, name='stripe_webhook'),
     path('my-purchases/', payment_views.my_purchases, name='my_purchases'),
+    path('add-product/', views.add_product, name='add_product'),
 ]

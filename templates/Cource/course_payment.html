@@ -1,0 +1,187 @@
+{% extends 'layout.html' %}
+{% block title %}Payment - {{ course.Name }}{% endblock %}
+
+{% block head %}
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+    .payment-container {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin: 40px auto;
+        max-width: 800px;
+        animation: fadeIn 1s;
+    }
+    
+    .course-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .course-info {
+        flex: 1;
+    }
+    
+    .course-image {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .course-title {
+        font-size: 2rem;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    
+    .course-description {
+        color: #555;
+        margin-bottom: 15px;
+        line-height: 1.5;
+    }
+    
+    .price-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        font-size: 1.25rem;
+    }
+    
+    .price-label {
+        margin-right: 15px;
+        color: #7f8c8d;
+    }
+    
+    .price-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #e74c3c;
+    }
+    
+    .payment-methods {
+        margin-bottom: 30px;
+    }
+    
+    .payment-title {
+        font-size: 1.5rem;
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+    
+    .btn-pay {
+        display: inline-block;
+        padding: 15px 30px;
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        width: 100%;
+    }
+    
+    .btn-pay:hover {
+        background: linear-gradient(45deg, #2980b9, #2471a3);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+    }
+    
+    .secure-payment {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .secure-payment i {
+        margin-right: 8px;
+        color: #2ecc71;
+    }
+    
+    .cancel-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #7f8c8d;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .cancel-link:hover {
+        color: #34495e;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="payment-container">
+    <div class="course-details">
+        <div class="course-info">
+            <h1 class="course-title">{{ course.Name }}</h1>
+            <p class="course-description">{{ course.description }}</p>
+            <div class="price-container">
+                <span class="price-label">Price:</span>
+                <span class="price-value">${{ course.price }}</span>
+            </div>
+        </div>
+        
+        {% if course.image %}
+            <img src="{{ course.image.url }}" alt="{{ course.Name }}" class="course-image">
+        {% else %}
+            <img src="/media/default.png" alt="Default Image" class="course-image">
+        {% endif %}
+    </div>
+    
+    <div class="payment-methods">
+        <h2 class="payment-title">Payment Method</h2>
+        <button id="checkout-button" class="btn-pay">Proceed to Payment</button>
+        <div class="secure-payment">
+            <i class="fas fa-lock"></i> Secure payment processed by Stripe
+        </div>
+    </div>
+    
+    <a href="{% url 'oneCource' course.id %}" class="cancel-link">Cancel and return to course</a>
+</div>
+
+<script>
+    var stripe = Stripe('{{ stripe_publishable_key }}');
+    var checkoutButton = document.getElementById('checkout-button');
+
+    checkoutButton.addEventListener('click', function() {
+        // Create a checkout session
+        fetch('{% url "course_checkout" course.id %}')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(session) {
+            return stripe.redirectToCheckout({ sessionId: session.id });
+        })
+        .then(function(result) {
+            if (result.error) {
+                alert(result.error.message);
+            }
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+        });
+    });
+</script>
+{% endblock %}

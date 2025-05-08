@@ -1,0 +1,115 @@
+{% extends 'layout.html' %}
+{% block title %}Payment Successful{% endblock %}
+
+{% block head %}
+<style>
+    .success-container {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        margin: 50px auto;
+        max-width: 700px;
+        text-align: center;
+        animation: fadeInUp 0.8s;
+    }
+    
+    .success-icon {
+        width: 100px;
+        height: 100px;
+        background-color: #2ecc71;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 30px;
+        box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);
+    }
+    
+    .success-icon i {
+        color: white;
+        font-size: 50px;
+    }
+    
+    .success-title {
+        font-size: 2.5rem;
+        color: #2c3e50;
+        margin-bottom: 20px;
+    }
+    
+    .success-message {
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+    
+    .course-info {
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .course-name {
+        font-size: 1.5rem;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    
+    .start-button {
+        display: inline-block;
+        padding: 15px 30px;
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    }
+    
+    .start-button:hover {
+        background: linear-gradient(45deg, #2980b9, #2471a3);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="success-container">
+    <div class="success-icon">
+        <i class="fas fa-check"></i>
+    </div>
+    
+    <h1 class="success-title">Payment Successful!</h1>
+    
+    <p class="success-message">
+        Thank you for your purchase. Your payment has been processed successfully and you are now enrolled in the course.
+    </p>
+    
+    <div class="course-info">
+        <h2 class="course-name">{{ course.Name }}</h2>
+        <p>By: {{ course.By }}</p>
+        <p>Duration: {{ course.duration }} hours</p>
+    </div>
+    
+    <a href="{% url 'oneCource' course.id %}" class="start-button">Start Learning Now</a>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+{% endblock %}

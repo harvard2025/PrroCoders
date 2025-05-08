@@ -4,78 +4,105 @@
 {% load static %}
 
 <style>
-    form{
-        margin-top: 30px;
+    body {
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
-        align-content: center;
-        gap: 10px;
+        padding: 20px;
     }
-    form > input[type=text], form > textarea, #lang{
-        width: 90%;
-        height: 40px;
-        border: 1px solid black;
-        border-radius: 25px;
-        padding: 10px;
-        font-size: 20px;
-    }
-    .submit{
-        border: 0.1px solid rgba(0, 0, 0, 0.217);
-        border-radius: 25px;
-        padding: 10px 20px;
-        background-color: rgb(254, 254, 254);
-        transition: 0.3s;
-        margin-top: 20px;
 
+    form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #fff;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        animation: fadeIn 1s ease forwards;
     }
-    .submit:hover{
 
-        transform: translateY(-5px);
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    form > input[type="text"],
+    form > textarea,
+    #lang,
+    input[type="file"] {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 15px;
+        padding: 12px 15px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: #f9f9f9;
+    }
+
+    form > input[type="text"]:focus,
+    form > textarea:focus,
+    #lang:focus,
+    input[type="file"]:focus {
+        border-color: #6c63ff;
+        box-shadow: 0 0 8px rgba(108, 99, 255, 0.3);
+        background: #fff;
+        outline: none;
+    }
+
+    form > textarea {
+        height: 100px;
+        resize: vertical;
+    }
+
+    .submit {
+        border: none;
+        border-radius: 25px;
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #6c63ff, #3f3dff);
+        color: #fff;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+    }
+
+    .submit:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 6px 20px rgba(108, 99, 255, 0.5);
     }
 </style>
 
-
 <form action="{% url 'Add_Cource' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="file" name="image" accept="image/*" required placeholder="image">
-    <input type="text" name="Name" class="url" placeholder="Name">
-    <textarea name="description" id="" placeholder="description" style="width: 90%;"></textarea>
-    <input type="text" name="duration" class="duration" placeholder="duration">
-    <input type="text" name="By" class="By" placeholder="{{request.user}}" value="">
-    <input type="text" name="price" class="price" placeholder="price">
-    <select name="lang" id="lang">
+    <input type="file" name="image" accept="image/*" required placeholder="Image">
+    <input type="text" name="Name" class="url" placeholder="Course Name" required>
+    <textarea name="description" placeholder="Course Description" required></textarea>
+    <input type="text" name="duration" class="duration" placeholder="Duration" required>
+    <input type="text" name="By" class="By" placeholder="{{request.user}}" >
+    <input type="text" name="price" class="price" placeholder="Price (e.g., 50$)" required>
+    <select name="lang" id="lang" required>
+        <option value="">Select Language</option>
         {% for lang in langs %}
-            <option value="{{lang.name}}">{{lang.name}}</option>
+            <option value="{{ lang.name }}">{{ lang.name }}</option>
         {% endfor %}
     </select>
 
-
-
-    <input type="submit" class="submit" value="Create Cource">
-    <br><br>
+    <input type="submit" class="submit" value="Create Course">
 </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 {% endblock %}

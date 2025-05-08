@@ -18,7 +18,11 @@ urlpatterns = [
     path('Add_Question/<int:id>', views.Q_V, name='Q'),
     path('Create_Question/<int:id>', views.Create_Q, name='Create_Q'),
     path('Add_Cource/', views.add_Cource, name='Add_Cource'),
-
+    # In CourcePanal/urls.py
+    path('course_payment/<int:id>', views.course_payment, name='course_payment'),
+    path('course_checkout/<int:id>', views.course_checkout, name='course_checkout'),
+    path('payment_success_course/', views.payment_success_course, name='payment_success_course'),
+    path('payment_cancel_course/', views.payment_cancel_course, name='payment_cancel_course'),
 
 
 
